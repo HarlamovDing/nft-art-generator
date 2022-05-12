@@ -10,6 +10,9 @@ import {useDispatch, useSelector} from "react-redux";
 
 import ImportButtons from "./ImportButtons";
 
+import {dbDexie} from "./db.js";
+import { useLiveQuery } from "dexie-react-hooks";
+
 const axios = require("axios");
 const FormData = require("form-data");
 
@@ -78,7 +81,7 @@ window.IDBKeyRange =
 // (Mozilla has never prefixed these objects, so we don't need window.mozIDB*)
 
 // Let us open our database
-// var openRequest = window.indexedDB.open("imgsStore", 1);
+// var openRequest = window.indexedDB.open("imgsStore", 10);
 
 // openRequest.onerror = event => {
 // 	console.log(event);
@@ -86,6 +89,7 @@ window.IDBKeyRange =
 // openRequest.onsuccess = event => {
 // 	console.log(event);
 // 	db = event.target.result;
+// 	db.onversionchange = function (event) { event.target.close(); }
 
 // };
 // This event is only implemented in recent browsers
@@ -130,12 +134,19 @@ function LoadNftPage() {
 		);
 	}
 
-	const openRequest = window.indexedDB.open("imgsStore", 1);
+	const openRequest = window.indexedDB.open("imgsStore", 10);
 	openRequest.onupgradeneeded = (event) => {
 		// Save the IDBDatabase interface
 		db = event.target.result;
 		console.log(db);
 		db.createObjectStore("imgs", {keyPath: "id", autoIncrement: true});
+
+		db.onversionchange = function (event) { 
+			console.log(event);
+			event.target.close(); 
+
+		}
+		
 
 		// Create an objectStore for this database
 		// var objectStore = db.createObjectStore("name", { keyPath: "myKey" });
@@ -254,7 +265,7 @@ function LoadNftPage() {
 				});
 			}, Promise.resolve());
 
-			const openRequest = window.indexedDB.open("imgsStore", 1);
+			const openRequest = window.indexedDB.open("imgsStore", 10);
 			const localClass = JSON.parse(localStorage.getItem("class"));
 			await request(openRequest, localClass).then((result) => {
 				localStorage.setItem("class", JSON.stringify(result));
@@ -277,7 +288,7 @@ function LoadNftPage() {
 			});
 
 		try {
-			const openRequest = await window.indexedDB.open("imgsStore", 1);
+			const openRequest = await window.indexedDB.open("imgsStore", 10);
 			openRequest.onsuccess = async (event) => {
 				const store = event.target.result
 					.transaction("imgs", "readwrite")
@@ -302,7 +313,7 @@ function LoadNftPage() {
 
 			let tempArr = [];
 
-			const openRequest = window.indexedDB.open("imgsStore", 1);
+			const openRequest = window.indexedDB.open("imgsStore", 10);
 
 			openRequest.onsuccess = async (event) => {
 				const store = event.target.result
@@ -401,7 +412,7 @@ function LoadNftPage() {
 			localStorage.getItem("class") !== undefined &&
 			localStorage.getItem("class") !== null
 		) {
-			const openRequest = window.indexedDB.open("imgsStore", 1);
+			const openRequest = window.indexedDB.open("imgsStore", 10);
 			const localClass = JSON.parse(localStorage.getItem("class"));
 			request(openRequest, localClass).then((result) => {
 				setClassArr1(result);
@@ -561,7 +572,7 @@ function LoadNftPage() {
 	// 	) {
 	// 		let localClass = JSON.parse(localStorage.getItem("class"));
 
-	// 		// var openRequest = window.indexedDB.open("imgsStore", 1);
+	// 		// var openRequest = window.indexedDB.open("imgsStore", 10);
 
 	// 		openRequest.onerror = () => {
 	// 			console.error("Request DB error");
@@ -862,21 +873,172 @@ function LoadNftPage() {
 
 			// let requestDB = db.transaction("imgs", "readwrite").objectStore("imgs");
 
-			const openRequest = window.indexedDB.open("imgsStore", 1);
+			const openRequest = window.indexedDB.open("imgsStore", 10);
+
+			console.log(openRequest);
+
+			openRequest.onerror = event => {
+				console.log(event);
+				// return;
+			};
 
 			openRequest.onsuccess = async (event) => {
-				const store = event.target.result
-					.transaction("imgs", "readwrite")
-					.objectStore("imgs");
+				console.log(1);
+				const store = event.target.result.transaction("imgs", "readwrite").objectStore("imgs");
+				console.log(store);
 
-				store.add(file);
+				console.log(event);
+				
+
+				
+
+				// const testres = store.add(file);
+
+				// const id = await dbDexie.imgs.add(file);
+
+				// console.log(id);
+				// testres.then((data)=>{
+				// 	console.log(data);
+				// });
+				// console.log(testres);
 
 				let lastId;
 
 				let tempBlob;
 
+				const resRequest = await dbDexie.imgs.toArray();
+				
+			
+
+				console.log(resRequest);
+
+				try{
+					lastId = resRequest[resRequest.length - 1].id;
+				}catch {
+					lastId = 0;
+				}
+				tempBlob = URL.createObjectURL(file);
+
+				var reader = new FileReader();
+				reader.readAsDataURL(file);
+				reader.onload = function (e) {
+					var image = new Image();
+
+					image.src = e.target.result;
+					image.onload = async function () {
+						let name = file.name.substring(0, file.name.indexOf("."));
+						// await pinFileToIPFS(
+						// 	pinataKey,
+						// 	pinataSecretKey,
+						// 	event.target.files[i],
+						// 	this.width,
+						// 	this.height,
+						// 	name,
+						// );
+
+						let newWidth = this.width;
+						let newHeight = this.height;
+
+						let tempArr = [];
+						for (let i = 0; i < classArr1.length; i++) {
+							let temp = classArr1[i];
+							if (classArr1[curentLayer].name == classArr1[i].name) {
+								if (temp.imgs[0] == undefined) {
+									// setWidth(newWidth);
+									// // changeError("width", width);
+									// setHeight(newHeight);
+									// changeError("height", height);
+
+									temp.imgs = [];
+									temp.imgs.push(lastId);
+									temp.url = [tempBlob];
+									temp.width = newWidth;
+									temp.height = newHeight;
+									temp.sizes = {
+										width: [newWidth],
+										height: [newHeight],
+									};
+									temp.names = [];
+									temp.rarity = [];
+									temp.rarity.push("4");
+									temp.names.push(name);
+								} else {
+									temp.imgs.push(lastId);
+									temp.names.push(name);
+									temp.url.push(tempBlob);
+									temp.width = newWidth;
+
+									temp.height = newHeight;
+									temp.rarity.push("4");
+
+									let tempSizesWidth = temp.sizes.width;
+									tempSizesWidth.push(newWidth);
+
+									let tempSizesHeight = temp.sizes.height;
+									tempSizesHeight.push(newHeight);
+
+									temp.sizes = {
+										width: tempSizesWidth,
+										height: tempSizesHeight,
+									};
+
+									// if(width < newWidth ) {
+									// 	setWidth(newWidth);
+									// 	console.log(width);
+									// }
+									// if(height < newHeight ) {
+									// 	setHeight(newHeight);
+									// }
+									// setWidth(width);
+									// changeError("width", width);
+									// setHeight(height);
+									// changeError("height", height);
+									// if ((temp.height == image.height && temp.width == image.width)) {
+									// 	temp.imgs.push(src);
+									// } else {
+									// 	setErrorModal({
+									// 		hidden: true,
+									// 		message: "Your images are different sizes",
+									// 	});
+									// }
+								}
+							}
+							tempArr.push(temp);
+						}
+
+						let maxW = Math.max.apply(null, tempArr[curentLayer].sizes.width);
+						let maxH = Math.max.apply(
+							null,
+							tempArr[curentLayer].sizes.height,
+						);
+
+						if (width < maxW) {
+							setWidth(maxW);
+						}
+						if (height < maxH) {
+							setHeight(maxH);
+						}
+						// setHeight(Math.max.apply(null, tempArr[curentLayer].sizes.height));
+						localStorage.setItem("class", JSON.stringify(tempArr));
+						localStorage.setItem("width", maxW);
+						localStorage.setItem("height", maxH);
+						// TODO : 123
+						setClassArr1(tempArr);
+					};
+				};
+
+				// store.getAll().onerror = (ev) => {
+				// 	console.log(ev);
+				// }
+
 				store.getAll().onsuccess = (event) => {
-					lastId = event.target.result[event.target.result.length - 1].id;
+					console.log(event);
+					// lastId;
+					try{
+						lastId = event.target.result[event.target.result.length - 1].id;
+					}catch {
+						lastId = 0;
+					}
 					tempBlob = URL.createObjectURL(file);
 
 					var reader = new FileReader();
@@ -1047,7 +1209,7 @@ function LoadNftPage() {
 	function removeImg(index) {
 		let tempArr = [];
 
-		const openRequest = window.indexedDB.open("imgsStore", 1);
+		const openRequest = window.indexedDB.open("imgsStore", 10);
 
 		let idDel = classArr1[curentLayer].imgs[index];
 

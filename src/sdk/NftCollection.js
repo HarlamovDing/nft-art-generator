@@ -2305,7 +2305,7 @@ function NftCollection() {
 										style={{opacity: "1", margin: "0px 0px 10px 0px"}}
 										class="desc"
 									>
-										If you choose not to sell your NFTs now. Don't worry. All of your items are now available under Profile page.
+										If you choose not to sell your NFTs now, don’t worry!. All of your items are now available under Profile page.
 									</div>
 
 									<button

@@ -35,6 +35,8 @@
     "classnames": "^2.3.1",
     "core-js": "^3.12.1",
     "dayjs": "^1.10.7",
+    "dexie": "^3.2.2",
+    "dexie-react-hooks": "^1.1.1",
     "env": "0.0.2",
     "fabric": "^5.2.1",
     "fabricjs-react": "^1.0.8",

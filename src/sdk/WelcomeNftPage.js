@@ -18,6 +18,8 @@ import {
 	scroller,
 } from "react-scroll";
 
+import {dbDexie} from "./db.js";
+
 const pidCrypt = require("pidcrypt");
 require("pidcrypt/aes_cbc");
 
@@ -72,6 +74,16 @@ function WelcomeNftPage() {
 						<div className="content">
 							<div className="title">
 								Create your own NFT collections easy and fast
+								{/* <button onClick={async ()=>{
+
+									const id = await dbDexie.imgs.add({
+										value: "name",
+										
+									});
+
+									console.log(id);
+
+								}}>Test</button> */}
 							</div>
 							<div className="text">
 								Download or generate more than 15,000 unique NFT arts with no
