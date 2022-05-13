@@ -390,7 +390,7 @@ function LoadNftPage() {
 								store.get(localClass[i].imgs[j]).onsuccess = (event) => {
 									console.log(event.target.result);
 									localClass[i].url[j] = URL.createObjectURL(
-										event.target.result,
+										event.target.result.value,
 									);
 									resolve(true);
 								};
@@ -877,26 +877,23 @@ function LoadNftPage() {
 
 			console.log(openRequest);
 
+
 			openRequest.onerror = event => {
 				console.log(event);
 				// return;
 			};
 
 			openRequest.onsuccess = async (event) => {
-				console.log(1);
+				console.log(event);
 				const store = event.target.result.transaction("imgs", "readwrite").objectStore("imgs");
 				console.log(store);
-
-				console.log(event);
-				
-
-				
-
 				// const testres = store.add(file);
 
-				// const id = await dbDexie.imgs.add(file);
+				console.log(file);
 
-				// console.log(id);
+				const id = await dbDexie.imgs.add({value: file});
+
+				console.log(id);
 				// testres.then((data)=>{
 				// 	console.log(data);
 				// });
@@ -907,16 +904,18 @@ function LoadNftPage() {
 				let tempBlob;
 
 				const resRequest = await dbDexie.imgs.toArray();
-				
-			
 
 				console.log(resRequest);
 
+				// console.log(URL.createObjectURL(resRequest));
+
 				try{
-					lastId = resRequest[resRequest.length - 1].id;
+					lastId = id;
+					// lastId = resRequest[i].id;
 				}catch {
 					lastId = 0;
 				}
+				console.log(lastId);
 				tempBlob = URL.createObjectURL(file);
 
 				var reader = new FileReader();
@@ -941,6 +940,7 @@ function LoadNftPage() {
 
 						let tempArr = [];
 						for (let i = 0; i < classArr1.length; i++) {
+
 							let temp = classArr1[i];
 							if (classArr1[curentLayer].name == classArr1[i].name) {
 								if (temp.imgs[0] == undefined) {
@@ -1701,8 +1701,15 @@ function LoadNftPage() {
 						<div className="modal-constructor modal-constructor-layers">
 							<div className="title-1">NFT Collection Editor</div>
 
+							{/* <button onClick={async ()=>{
+								console.log("test");
+								const id = await dbDexie.imgs.add({value: "test"});
+
+								console.log(id);
+							}}>test</button> */}
+
 							<div class="steps mobile-steps">
-								<div class="step step1 active">
+								<div class="step  step-hov step1 active">
 									<div class="img"></div>
 									<div class="text">
 										<div class="name">Step 1</div>
@@ -1711,7 +1718,7 @@ function LoadNftPage() {
 								</div>
 								<div class="line"></div>
 								<div
-									class="step step2"
+									class="step  step-hov step2"
 									onClick={() => {
 										let res = logData();
 										if (res && checkLimit()) {
@@ -1727,7 +1734,7 @@ function LoadNftPage() {
 								</div>
 								<div class="line"></div>
 								<div
-									class="step step3"
+									class="step  step-hov step3"
 									onClick={() => {
 										let res = logData();
 										if (
@@ -1816,7 +1823,7 @@ function LoadNftPage() {
 						</div>
 						<div className="modal-constructor modal-constructor-upload">
 							<div class="steps steps-desk">
-								<div class="step step1 active">
+								<div class="step  step-hov step1 active">
 									<div class="img"></div>
 									<div class="text">
 										<div class="name">Step 1</div>
@@ -1825,7 +1832,7 @@ function LoadNftPage() {
 								</div>
 								<div class="line"></div>
 								<div
-									class="step step2"
+									class="step  step-hov step2"
 									onClick={() => {
 										let res = logData();
 										if (checkLimit() && res ) {
@@ -1841,7 +1848,7 @@ function LoadNftPage() {
 								</div>
 								<div class="line"></div>
 								<div
-									class="step step3"
+									class="step  step-hov step3"
 									onClick={() => {
 										let res = logData();
 										if (

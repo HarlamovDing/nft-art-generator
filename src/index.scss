@@ -454,13 +454,13 @@ input {
 }
 .steps > .step {
 	display: flex;
-	cursor: pointer;
 	opacity: 0.6;
 }
-.steps > .step:hover {
+.steps > .step-hov:hover {
 	opacity: 1;
+	cursor: pointer;
 }
-.steps > .step:hover > .img {
+.steps > .step-hov:hover > .img {
 	background: #6333ff;
 	background-position: center center;
 	background-repeat: no-repeat;

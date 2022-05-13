@@ -81,7 +81,7 @@ function PackPage() {
 
 	// console.log(1);
 
-	var openRequest = window.indexedDB.open("imgsStore", 1);
+	var openRequest = window.indexedDB.open("imgsStore", 10);
 	// localClass = JSON.parse(localStorage.getItem("class"))
 	// openRequest.onsuccess = async (event) => {
 	// 	let db = event.target.result;

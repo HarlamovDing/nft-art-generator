@@ -342,7 +342,7 @@
 // 	let localClass = arr;
 // 	// loading project from localStorage
 
-// 	var openRequest = window.indexedDB.open("imgsStore", 1);
+// 	var openRequest = window.indexedDB.open("imgsStore", 10);
 // 	localClass = JSON.parse(localStorage.getItem("class"));
 // 	openRequest.onsuccess = async (event) => {
 // 		console.log(event);
@@ -834,7 +834,7 @@
 // 						<div className="modal-constructor modal-constructor-layers ">
 // 							<div className="title-1">NFT Editor</div>
 // 							<div class="steps mobile-steps">
-// 								<div class="step step1">
+// 								<div class="step  step-hov step1">
 // 									<div class="img"></div>
 // 									<div class="text">
 // 										<div class="name">Step 1</div>
@@ -843,7 +843,7 @@
 // 								</div>
 // 								<div class="line"></div>
 // 								<div
-// 									class="step step2  active"
+// 									class="step  step-hov step2  active"
 // 									onClick={() => {
 // 										let res = logData();
 // 										if (res) {
@@ -858,7 +858,7 @@
 // 									</div>
 // 								</div>
 // 								<div class="line"></div>
-// 								<div class="step step3" onClick={logData}>
+// 								<div class="step  step-hov step3" onClick={logData}>
 // 									<div class="img"></div>
 // 									<div class="text">
 // 										<div class="name">Step 3</div>
@@ -957,7 +957,7 @@
 // 						<div className="modal-constructor modal-constructor-position">
 // 							<div class="steps steps-desk">
 // 								<div
-// 									class="step step1"
+// 									class="step  step-hov step1"
 // 									onClick={() => {
 // 										history.push("/load-nft");
 // 									}}
@@ -969,7 +969,7 @@
 // 									</div>
 // 								</div>
 // 								<div class="line"></div>
-// 								<div class="step step2 active">
+// 								<div class="step  step-hov step2 active">
 // 									<div class="img"></div>
 // 									<div class="text">
 // 										<div class="name">Step 2</div>
@@ -977,7 +977,7 @@
 // 									</div>
 // 								</div>
 // 								<div class="line"></div>
-// 								<div class="step step3" onClick={logData}>
+// 								<div class="step  step-hov step3" onClick={logData}>
 // 									<div class="img"></div>
 // 									<div class="text">
 // 										<div class="name">Step 3</div>
@@ -1499,7 +1499,7 @@ function NftCustomization() {
 				});
 			}, Promise.resolve());
 
-			const openRequest = window.indexedDB.open("imgsStore", 1);
+			const openRequest = window.indexedDB.open("imgsStore", 10);
 			const localClass = JSON.parse(localStorage.getItem("class"));
 			await request(openRequest, localClass).then((result) => {
 				localStorage.setItem("class", JSON.stringify(result));
@@ -1522,7 +1522,7 @@ function NftCustomization() {
 			});
 
 		try {
-			const openRequest = await window.indexedDB.open("imgsStore", 1);
+			const openRequest = await window.indexedDB.open("imgsStore", 10);
 			openRequest.onsuccess = async (event) => {
 				const store = event.target.result
 					.transaction("imgs", "readwrite")
@@ -1550,7 +1550,7 @@ function NftCustomization() {
 								console.log(i, j);
 								store.get(localClass[i].imgs[j]).onsuccess = (event) => {
 									localClass[i].url[j] = URL.createObjectURL(
-										event.target.result,
+										event.target.result.value,
 									);
 									resolve(true);
 								};
@@ -1571,7 +1571,7 @@ function NftCustomization() {
 
 		let tempArr = [];
 
-		const openRequest = window.indexedDB.open("imgsStore", 1);
+		const openRequest = window.indexedDB.open("imgsStore", 10);
 
 		openRequest.onsuccess = async (event) => {
 			const store = event.target.result
@@ -1805,7 +1805,7 @@ function NftCustomization() {
 	let localClass = arr;
 	// loading project from localStorage
 
-	var openRequest = window.indexedDB.open("imgsStore", 1);
+	var openRequest = window.indexedDB.open("imgsStore", 10);
 	localClass = JSON.parse(localStorage.getItem("class"));
 	openRequest.onsuccess = async (event) => {
 		//console.log(event);
@@ -1818,7 +1818,7 @@ function NftCustomization() {
 			for (let j = 0; j < localClass[i].imgs.length; j++) {
 				store.get(localClass[i].imgs[j]).onsuccess = (event) => {
 					//console.log(event.target.result);
-					localClass[i].url[j] = URL.createObjectURL(event.target.result);
+					localClass[i].url[j] = URL.createObjectURL(event.target.result.value);
 				};
 			}
 		}
@@ -2287,7 +2287,7 @@ function NftCustomization() {
 						<div className="modal-constructor modal-constructor-layers ">
 							<div className="title-1">NFT Editor</div>
 							<div class="steps mobile-steps">
-								<div class="step step1">
+								<div class="step  step-hov step1">
 									<div class="img"></div>
 									<div class="text">
 										<div class="name">Step 1</div>
@@ -2296,7 +2296,7 @@ function NftCustomization() {
 								</div>
 								<div class="line"></div>
 								<div
-									class="step step2  active"
+									class="step  step-hov step2  active"
 									onClick={() => {
 										let res = logData();
 										if (res) {
@@ -2311,7 +2311,7 @@ function NftCustomization() {
 									</div>
 								</div>
 								<div class="line"></div>
-								<div class="step step3" onClick={logData}>
+								<div class="step  step-hov step3" onClick={logData}>
 									<div class="img"></div>
 									<div class="text">
 										<div class="name">Step 3</div>
@@ -2410,7 +2410,7 @@ function NftCustomization() {
 						<div className="modal-constructor modal-constructor-position">
 							<div class="steps steps-desk">
 								<div
-									class="step step1"
+									class="step  step-hov step1"
 									onClick={() => {
 										history.push("/load-nft");
 									}}
@@ -2422,7 +2422,7 @@ function NftCustomization() {
 									</div>
 								</div>
 								<div class="line"></div>
-								<div class="step step2 active">
+								<div class="step  step-hov step2 active">
 									<div class="img"></div>
 									<div class="text">
 										<div class="name">Step 2</div>
@@ -2430,7 +2430,7 @@ function NftCustomization() {
 									</div>
 								</div>
 								<div class="line"></div>
-								<div class="step step3" onClick={logData}>
+								<div class="step  step-hov step3" onClick={logData}>
 									<div class="img"></div>
 									<div class="text">
 										<div class="name">Step 3</div>

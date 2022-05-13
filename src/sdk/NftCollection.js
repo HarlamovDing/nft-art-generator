@@ -54,6 +54,8 @@ Object.defineProperty(window, "indexedDB", {
 function NftCollection() {
 	let classArr = JSON.parse(localStorage.getItem("class"));
 
+	const [nearPrice, setNearPrice] = useState(0);
+
 	// let localClass = arr;
 	// loading project from localStorage
 
@@ -79,7 +81,7 @@ function NftCollection() {
 
 	const [collectionCount, setCollectionCount] = useState([0,0]);
 
-	var openRequest = window.indexedDB.open("imgsStore", 1);
+	var openRequest = window.indexedDB.open("imgsStore", 10);
 	// localClass = JSON.parse(localStorage.getItem("class"))
 	openRequest.onsuccess = async (event) => {
 		let db = event.target.result;
@@ -89,7 +91,7 @@ function NftCollection() {
 		for (let i = 0; i < classArr.length; i++) {
 			for (let j = 0; j < classArr[i].imgs.length; j++) {
 				store.get(classArr[i].imgs[j]).onsuccess = (event) => {
-					classArr[i].url[j] = URL.createObjectURL(event.target.result);
+					classArr[i].url[j] = URL.createObjectURL(event.target.result.value);
 				};
 			}
 		}
@@ -249,7 +251,7 @@ function NftCollection() {
 
 			let tempArr = []
 
-			const openRequest = window.indexedDB.open("imgsStore", 1);
+			const openRequest = window.indexedDB.open("imgsStore", 10);
 
 			openRequest.onsuccess = async (event) => {
 
@@ -313,7 +315,7 @@ function NftCollection() {
 
 	async function getIndexeedDB() {
 
-		const openRequest = window.indexedDB.open("imgsStore", 1);
+		const openRequest = window.indexedDB.open("imgsStore", 10);
 
 		let idBlobObj = {}
 
@@ -397,6 +399,25 @@ function NftCollection() {
 		}, 1000);
 
 	}
+
+	useEffect(async ()=>{
+
+		await fetch("https://helper.testnet.near.org/fiat", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json; charset=utf-8",
+				Connection: "keep-alive",
+			},
+		})
+		.then((data) => {
+			return data.json();
+		})
+		.then(async (price) => {
+			console.log(price.near.usd);
+			setNearPrice(price.near.usd);
+		});
+
+	})
 
 	useEffect(async () => {
 		console.log("UseEffect minted");
@@ -2133,7 +2154,7 @@ function NftCollection() {
 									<button
 										className={
 											activeButtons[0]
-												? "button-1-square button-arrow"
+												? "button-1-square"
 												: "button-1-square button-1-square-disabled"
 										}
 										style={{margin: "0px 0px 00px 0px"}}
@@ -2143,13 +2164,13 @@ function NftCollection() {
 									</button>
 
 									<div style={{margin: "0px 0px 10px 0px"}} className="desc">
-										Smart-contract one-time fee ~8 NEAR 
+										Smart-contract one-time fee ~8 NEAR ({8*nearPrice} USD)
 									</div>
 
 									<button
 										className={
 											activeButtons[1]
-												? "button-1-square"
+												? "button-1-square button-arrow"
 												: "button-1-square button-1-square-disabled"
 										}
 										onClick={activeButtons[1] ? multTrans : null}
@@ -2324,11 +2345,11 @@ function NftCollection() {
 						<div class="modal-constructor modal-constructor-collection">
 							<div class="steps steps-univ">
 								<div
-									// class="step step1 active"
+									// class="step  step-hov step1 active"
 									className={
 										curentCollectionStep == 1
-											? "step step1 active"
-											: "step step1"
+											? "step step-hov step1 active"
+											: "step step-hov step1"
 									}
 									onClick={() => {
 										localStorage.setItem("nft-collection-step", 1);
@@ -2345,8 +2366,8 @@ function NftCollection() {
 								<div
 									className={
 										curentCollectionStep == 2
-											? "step step2 active"
-											: "step step2"
+											? "step step-hov step2 active"
+											: "step step-hov step2"
 									}
 									onClick={() => {
 										localStorage.setItem("nft-collection-step", 2);
@@ -2363,8 +2384,8 @@ function NftCollection() {
 								<div
 									className={
 										curentCollectionStep == 3
-											? "step step3 active"
-											: "step step3"
+											? "step step-hov step3 active"
+											: "step step-hov step3"
 									}
 									onClick={() => {
 										isSaleAvailiable();
