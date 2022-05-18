@@ -2086,6 +2086,12 @@ button,
 	background-image: url("./sdk/img/Folder_open_light.png");
 }
 .modal-constructor .import-buttons > .save {
+	background: #707171;
+	background-image: url("./sdk/img/Save_light.png");
+	background-repeat: no-repeat;
+	background-position: center;
+}
+.modal-constructor .import-buttons > .save-active {
 	background: #01824c;
 	background-image: url("./sdk/img/Save_light.png");
 	background-repeat: no-repeat;

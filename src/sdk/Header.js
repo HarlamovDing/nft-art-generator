@@ -201,7 +201,7 @@ function Header({activeCat}) {
 					zIndex: "10",
 				}}
 			>
-				V13.05/12:00
+				V18.05/14:00
 			</span>
 			<div className="header header2">
 				<div className="container-header">
