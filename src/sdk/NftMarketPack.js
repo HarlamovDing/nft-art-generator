@@ -11,14 +11,9 @@ import {signerKeys, TonClient, signerNone} from "@tonclient/core";
 // import {NftRootContract} from "./collection contracts/nftour/src/build/NftRootContract.js";
 // import {CollectionRoot} from "./collection contracts/nftour/src/build/NftRootContract.js";
 // import {StorageContract} from "./collection contracts/nftour/src/build/StorageContract.js";
-import {DEXRootContract} from "./test net contracts/DEXRoot.js";
-
 import {DEXClientContract} from "./test net contracts/DEXClient.js";
-import {Collections, InsertEmoticon} from "@material-ui/icons";
 
 import {DataContract} from "./collection contracts/DataContract.js";
-import {NFTMarketContract} from "./collection contracts/NftMarketContract.js";
-import {NftRootColectionContract} from "./collection contracts/NftRootColectionContract.js";
 import {OfferContract} from "./collection contracts/OfferContract.js";
 
 import Header from "./Header";

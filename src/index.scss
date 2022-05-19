@@ -94,7 +94,7 @@ a:hover {
 }
 .error-bg {
 	width: 100vw;
-	height: 100vh;
+	height: 100%;
 	background: rgba(0, 0, 0, 0.7);
 	z-index: 10;
 	position: absolute;
@@ -135,7 +135,7 @@ a:hover {
 	transform: translate(-50%, -50%) rotate(-45deg);
 }
 .error-modal {
-	position: absolute;
+	position: fixed;
 	width: 350px;
 	height: 200px;
 	background: #282a2d;
@@ -144,9 +144,10 @@ a:hover {
 	z-index: 11;
 	border-radius: 4px;
 	left: 50%;
-	top: 300px;
+	top: 50%;
 	transform: translate(-50%, -50%);
 }
+
 .error-modal-img {
 	padding: 25px;
 	position: absolute;
@@ -1220,11 +1221,14 @@ button,
 	margin-bottom: 15px;
 	flex-wrap: nowrap;
 }
-.modal-constructor-layers > .title-1 {
-	font-size: 32px;
+.modal-constructor > .title-1 {
+	// font-size: 32px;
+	font-size: 1.7vw;
 	color: #fff;
-	margin-bottom: 54px;
+	padding-bottom: 25px;
+	margin-bottom: 40px;
 	font-weight: 700;
+	border-bottom: 1px solid #686868;
 }
 .modal-constructor-layers > .randomize-many > input {
 	width: 40%;

@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import {HashRouter as Router, Redirect, useHistory} from "react-router-dom";
-//import {main_screen_bg} from "../sdk/img/screenbg1.png"
 import Header from "./Header";
 import Footer from "./Footer";
 

@@ -1,24 +1,14 @@
-import React, {useContext, useState, useEffect, useRef} from "react";
-import {HashRouter as Router, Redirect, useHistory} from "react-router-dom";
-import Context from "./Context";
+import React, {useState, useEffect, useRef} from "react";
+import {HashRouter as Router,useHistory} from "react-router-dom";
+// import Context from "./Context";
 import Header from "./Header";
 import Footer from "./Footer";
+import HeaderEditor from "./HeaderEditor";
+import ErrorModal from "./ErrorModal";
 
-import {Button, Box} from "@mui/material";
-
-import {useDispatch, useSelector} from "react-redux";
-
-import ImportButtons from "./ImportButtons";
+import {useDispatch} from "react-redux";
 
 import {dbDexie} from "./db.js";
-import { useLiveQuery } from "dexie-react-hooks";
-
-const axios = require("axios");
-const FormData = require("form-data");
-
-const pinataKey = "0a2ed9f679a6c395f311";
-const pinataSecretKey =
-	"7b53c4d13eeaf7063ac5513d4c97c4f530ce7e660f0c147ab5d6aee6da9a08b9";
 
 // layer instance
 class MyClass {
@@ -69,61 +59,11 @@ Object.defineProperty(window, "indexedDB", {
 		window.msIndexedDB,
 });
 
-// In the following line, you should include the prefixes of implementations you want to test.
-// window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
-// DON'T use "var indexedDB = ..." if you're not in a function.
-// Moreover, you may need references to some window.IDB* objects:
 window.IDBTransaction = window.IDBTransaction ||
 	window.webkitIDBTransaction ||
 	window.msIDBTransaction || {READ_WRITE: "readwrite"}; // This line should only be needed if it is needed to support the object's constants for older browsers
 window.IDBKeyRange =
 	window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
-// (Mozilla has never prefixed these objects, so we don't need window.mozIDB*)
-
-// Let us open our database
-// var openRequest = window.indexedDB.open("imgsStore", 10);
-
-// openRequest.onerror = event => {
-// 	console.log(event);
-// };
-// openRequest.onsuccess = event => {
-// 	console.log(event);
-// 	db = event.target.result;
-// 	db.onversionchange = function (event) { event.target.close(); }
-
-// };
-// This event is only implemented in recent browsers
-// openRequest.onupgradeneeded = event => {
-// 	// Save the IDBDatabase interface
-// 	db = event.target.result;
-// 	console.log(db);
-// 	db.createObjectStore("imgs", { keyPath: "id" , autoIncrement: true});
-
-// 	// Create an objectStore for this database
-// 	// var objectStore = db.createObjectStore("name", { keyPath: "myKey" });
-// };
-
-function addData() {
-	let transaction = db.transaction("myObjStore", "readwrite");
-	let tempObjs = transaction.objectStore("myObjStore");
-
-	let tempObj = {
-		ket23: "val32",
-	};
-
-	let request = tempObjs.add(tempObj);
-}
-
-function deleteData() {
-	let request = db
-		.transaction("myObjStore", "readwrite")
-		.objectStore("myObjStore")
-		.delete(1);
-}
-
-function getData() {
-	let store = db.transaction("myObjStore").objectStore("myObjStore");
-}
 
 function LoadNftPage() {
 	var db;
@@ -146,22 +86,16 @@ function LoadNftPage() {
 			event.target.close(); 
 
 		}
-		
-
-		// Create an objectStore for this database
-		// var objectStore = db.createObjectStore("name", { keyPath: "myKey" });
 	};
 
 	let nftArea = useRef();
-	// setClassArr1([
-	// 	new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
-	// ]);
-
-	//const {status} = useContext(Context);
 	let history = useHistory();
 
 	const dispatch = useDispatch();
-	const connectWallet = useSelector((state) => state.connectWallet);
+
+	const openError = (text) => {
+        dispatch({type: "openError", payload: text});
+    }
 
 	const [newLayer, setNewLayer] = useState();
 
@@ -169,30 +103,13 @@ function LoadNftPage() {
 
 	const [curentImages, setCurentImages] = useState([0]);
 
-	const [connect, setConnect] = useState(false);
-
-	const [urlImg, setUrlImg] = useState("");
-
 	const [videoPlay, setVideoPlay] = useState(false);
 
 	const [accordionHidden, setAccordioHidden] = useState([false, false]);
 
-	// const [sizeImgs, setSizeImgs] = useState([0]);
-
-	const [errorModal, setErrorModal] = useState({
-		hidden: false,
-		message: "",
-	});
-
-	const [redirect, setRedirect] = useState(false);
-
 	const [activeNext, setActiveNext] = useState(false);
 
-	const [tempBg, setTempBg] = useState([]);
-
 	const [layerErr, setLayerErr] = useState(false);
-
-	const [maxSize, setMaxSize] = useState(0);
 
 	const [errorInput, setErrorInput] = useState();
 
@@ -224,156 +141,6 @@ function LoadNftPage() {
 
 	const [classArr1, setClassArr1] = useState([]);
 
-	function newProject() {
-		history.push("/load-nft");
-		localStorage.clear();
-		let deleteRequest = window.indexedDB.deleteDatabase("imgsStore");
-		location.reload();
-	}
-
-	async function loadProject(e) {
-		const fileReader = new FileReader();
-		fileReader.readAsText(e.target.files[0], "UTF-8");
-		fileReader.onload = async (e) => {
-			localStorage;
-			const data = JSON.parse(e.target.result);
-
-			setProjectName(data.projectName || "");
-			setCollectionName(data.collectionName || "");
-			setProjectDescription(data.projectDescription || "");
-			setWidth(data.width);
-			setHeight(data.height);
-			setClassArr1(data.classArr);
-			// localStorage.setItem(
-			// 	"project",
-			// 	JSON.stringify({
-			// 		name: projectName,
-			// 		collectionName: collectionName,
-			// 		description: projectDescription,
-			// 	}),
-			// );
-			localStorage.setItem("class", JSON.stringify(data.classArr));
-			localStorage.setItem("width", data.width);
-			localStorage.setItem("height", data.height);
-
-			//setFiles(e.target.result);
-
-			const imgs = Object.values(data.indexedData);
-			await imgs.reduce((previousPromise, nextID) => {
-				return previousPromise.then(() => {
-					return addFileInDB(nextID, 1);
-				});
-			}, Promise.resolve());
-
-			const openRequest = window.indexedDB.open("imgsStore", 10);
-			const localClass = JSON.parse(localStorage.getItem("class"));
-			await request(openRequest, localClass).then((result) => {
-				localStorage.setItem("class", JSON.stringify(result));
-				//setClassArr1(result);
-			});
-			await history.go("/load-nft");
-		};
-	}
-
-	async function addFileInDB(dataURL, index) {
-		var arr = dataURL.split(",");
-		var mime = arr[0].match(/:(.*?);/)[1];
-		var type = mime.split("/")[1];
-
-		//console.log("file", arr, mime, type);
-		const file = await fetch(dataURL)
-			.then((res) => res.blob())
-			.then((blob) => {
-				return new File([blob], index + "." + type, {type: mime});
-			});
-
-		try {
-			const openRequest = await window.indexedDB.open("imgsStore", 10);
-			openRequest.onsuccess = async (event) => {
-				const store = event.target.result
-					.transaction("imgs", "readwrite")
-					.objectStore("imgs");
-
-				await store.add(file);
-			};
-		} catch (e) {
-			console.error(e);
-		}
-	}
-
-	function saveProject(e) {
-		if (projectName === undefined) {
-			setErrorModal({
-				hidden: true,
-				message: "Project name is empty!",
-			});
-			return;
-		} else {
-			let idBlobObj = {};
-
-			let tempArr = [];
-
-			const openRequest = window.indexedDB.open("imgsStore", 10);
-
-			openRequest.onsuccess = async (event) => {
-				const store = event.target.result
-					.transaction("imgs")
-					.objectStore("imgs");
-				store.getAll().onsuccess = (event) => {
-					console.log(event.target.result);
-					const store_data = event.target.result;
-
-					for (let i = 0; i < store_data.length; i++) {
-						let tempFile = store_data[i];
-
-						console.log(tempFile);
-						// tempFile.arrayBuffer().then((data)=>{
-						//   console.log(data);
-						// })
-
-						tempArr.push(tempFile);
-
-						let reader = new FileReader();
-						reader.readAsDataURL(tempFile);
-						reader.onload = (e) => {
-							console.log(e.currentTarget.result);
-							let tempId = tempFile.id;
-							idBlobObj[tempId] = e.currentTarget.result;
-						};
-					}
-				};
-			};
-
-			setTimeout(() => {
-				console.log(idBlobObj);
-				const data = {
-					projectName: projectName,
-					collectionName: collectionName,
-					projectDescription: projectDescription,
-					width: localStorage.getItem("width"),
-					height: localStorage.getItem("height"),
-					classArr: classArr1,
-					indexedData: idBlobObj,
-				};
-
-				e.preventDefault();
-				const a = document.createElement("a");
-				const file = new Blob([JSON.stringify(data)], {type: "text/json"});
-				a.href = URL.createObjectURL(file);
-				a.download = projectName + ".json";
-				a.click();
-
-				URL.revokeObjectURL(a.href);
-
-				// downloadFile({
-				// 	data: JSON.stringify(data),
-				// 	fileName: projectName + ".json",
-				// 	fileType: "text/json",
-				// });
-			}, 1000);
-		}
-	}
-
 	function request(openRequest, localClass) {
 		return new Promise((resolve, reject) => {
 			openRequest.onsuccess = async (event) => {
@@ -388,7 +155,9 @@ function LoadNftPage() {
 							new Promise((resolve, reject) => {
 								console.log(i, j);
 								store.get(localClass[i].imgs[j]).onsuccess = (event) => {
-									console.log(event.target.result);
+									console.log(URL.createObjectURL(
+										event.target.result.value,
+									));
 									localClass[i].url[j] = URL.createObjectURL(
 										event.target.result.value,
 									);
@@ -407,7 +176,6 @@ function LoadNftPage() {
 
 	useEffect(() => {
 		
-
 		if (
 			localStorage.getItem("class") !== undefined &&
 			localStorage.getItem("class") !== null
@@ -418,20 +186,12 @@ function LoadNftPage() {
 				setClassArr1(result);
 			});
 
-			// console.log(URL.createObjectURL(file));
-
 			if (
 				localStorage.getItem("details") !== undefined &&
 				localStorage.getItem("details") !== null
 			) {
-				// changeError("projName",JSON.parse(localStorage.getItem("details")).projName);
-				// changeError("colName",JSON.parse(localStorage.getItem("details")).projectName);
-				// changeError("colDesc",JSON.parse(localStorage.getItem("details")).projectDescription);
 				projDet = JSON.parse(localStorage.getItem("details"));
 			}
-
-			// setWidth(localStorage.getItem("width"));
-			// setHeight(localStorage.getItem("height"));
 
 			let tempActiveLayer = 0;
 
@@ -445,10 +205,6 @@ function LoadNftPage() {
 			localWidth = localStorage.getItem("width");
 			localHeight = localStorage.getItem("height");
 
-			// console.log(localClass);
-			// setClassArr1(localClass);
-
-			// console.log(JSON.parse(localStorage.getItem("details")).projName);
 		} else {
 			setClassArr1([
 				new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
@@ -467,24 +223,8 @@ function LoadNftPage() {
 			setProjectName("No Name");
 			setProjectDescription("No Description");
 
-			// setClassArr1([
-			// 	new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
-			// ]);
 		}
 	}, []);
-
-	// const [width, setWidth] = useState(0);
-	// const [height, setHeight] = useState(0);
-
-	// const [projectName, setProjectName] = useState("No Name");
-	// const [collectionName, setCollectionName] = useState("No Name");
-	// const [projectDescription, setProjectDescription] = useState("No Description");
-
-	// const [classArr1, setClassArr1] = useState([new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0)]);
-
-	// useEffect(()=>{
-	// 	console.log("effect");
-	// })
 
 	useEffect(async () => {
 		//deleting previous transactions
@@ -499,36 +239,6 @@ function LoadNftPage() {
 			localStorage.getItem("class") !== null
 		) {
 			let localClass = JSON.parse(localStorage.getItem("class"));
-
-			// openRequest.onerror = event => {
-			// 	console.log(event);
-			// };
-			// openRequest.onsuccess = async (event) => {
-			// 	console.log(event);
-			// 	db = event.target.result;
-
-			// 	let store = db.transaction("imgs").objectStore("imgs");
-
-			// 	for(let i = 0; i < localClass.length; i++) {
-			// 		for(let j = 0; j < localClass[i].imgs.length; j++) {
-			// 			store.get(localClass[i].imgs[j]).onsuccess = (event) => {
-			// 				console.log(event.target.result);
-			// 				localClass[i].url[j] = URL.createObjectURL(event.target.result);
-			// 			}
-
-			// 		}
-			// 	}
-
-			// 	console.log(localClass);
-
-			// 	setTimeout(()=>{
-			// 		setClassArr1(localClass);
-			// 	}, 1000);
-
-			// };
-			// This event is only implemented in recent browsers
-
-			// console.log(URL.createObjectURL(file));
 
 			if (
 				localStorage.getItem("details") !== undefined &&
@@ -551,232 +261,16 @@ function LoadNftPage() {
 			setWidth(localStorage.getItem("width"));
 			setHeight(localStorage.getItem("height"));
 
-			// console.log(localClass);
-			// setClassArr1(localClass);
-
-			// console.log(JSON.parse(localStorage.getItem("details")).projName);
 		} else {
-			// setClassArr1([
-			// 	new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
-			// ]);
+			
 		}
-		setMaxSize(nftArea.current.offsetWidth);
 	}, []);
-
-	// useEffect(()=>{
-
-	// 	if (
-	// 		// localStorage.getItem("class") !== undefined &&
-	// 		// localStorage.getItem("class") !== null
-	// 		false
-	// 	) {
-	// 		let localClass = JSON.parse(localStorage.getItem("class"));
-
-	// 		// var openRequest = window.indexedDB.open("imgsStore", 10);
-
-	// 		openRequest.onerror = () => {
-	// 			console.error("Request DB error");
-	// 		}
-
-	// 		openRequest.onsuccess = async (event) => {
-	// 			db = event.target.result;
-
-	// 			let store = db.transaction("imgs").objectStore("imgs");
-
-	// 			for(let i = 0; i < localClass.length; i++) {
-	// 				for(let j = 0; j < localClass[i].imgs.length; j++) {
-	// 					store.get(localClass[i].imgs[j]).onsuccess = (event) => {
-	// 						console.log(event.target.result);
-	// 						localClass[i].url[j] = URL.createObjectURL(event.target.result);
-	// 					}
-
-	// 				}
-	// 			}
-
-	// 			console.log(localClass);
-
-	// 			setTimeout(()=>{
-	// 				setClassArr1(localClass);
-	// 			}, 1000);
-
-	// 		};
-
-	// 		openRequest.onupgradeneeded = event => {
-	// 			// Save the IDBDatabase interface
-	// 			db = event.target.result;
-	// 			console.log(db);
-	// 			db.createObjectStore("imgs", { keyPath: "id" , autoIncrement: true});
-
-	// 			// Create an objectStore for this database
-	// 			// var objectStore = db.createObjectStore("name", { keyPath: "myKey" });
-	// 		};
-
-	// 		// console.log(URL.createObjectURL(file));
-
-	// 		if(
-	// 			localStorage.getItem("details") !== undefined &&
-	// 			localStorage.getItem("details") !== null
-	// 		) {
-	// 			changeError("projName",JSON.parse(localStorage.getItem("details")).projName);
-	// 			changeError("colName",JSON.parse(localStorage.getItem("details")).projectName);
-	// 			changeError("colDesc",JSON.parse(localStorage.getItem("details")).projectDescription);
-	// 		}
-
-	// 		setWidth(localStorage.getItem("width"));
-	// 		setHeight(localStorage.getItem("height"));
-
-	// 		// console.log(localClass);
-	// 		// setClassArr1(localClass);
-
-	// 		// console.log(JSON.parse(localStorage.getItem("details")).projName);
-	// 	} else {
-
-	// 		// setClassArr1([
-	// 		// 	new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
-	// 		// ]);
-	// 	}
-
-	// 	console.log(classArr1, "12333");
-	// 	console.log("UseEffect2");
-
-	// }, [classArr1]);
-
-	//uploading files to ipfs
-	const pinFileToIPFS = async (
-		pinataKey,
-		pinataSecretKey,
-		src,
-		newWidth,
-		newHeight,
-		name,
-	) => {
-		const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
-
-		let data = new FormData();
-
-		// console.log(src);
-		data.append("file", src);
-
-		await axios
-			.post(url, data, {
-				maxBodyLength: "Infinity", //this is needed to prevent axios from erroring out with large files
-				headers: {
-					"Content-Type": `multipart/form-data; boundary=${data._boundary}`,
-					pinata_api_key: pinataKey,
-					pinata_secret_api_key: pinataSecretKey,
-				},
-			})
-			.then(function (response) {
-				//handle response here
-
-				let tempArr = [];
-				for (let i = 0; i < classArr1.length; i++) {
-					let temp = classArr1[i];
-					if (classArr1[curentLayer].name == classArr1[i].name) {
-						if (temp.imgs[0] == undefined) {
-							// setWidth(newWidth);
-							// // changeError("width", width);
-							// setHeight(newHeight);
-							// changeError("height", height);
-
-							temp.imgs = [];
-							temp.imgs.push(response.data.IpfsHash);
-							temp.width = newWidth;
-							temp.height = newHeight;
-							temp.sizes = {
-								width: [newWidth],
-								height: [newHeight],
-							};
-							temp.names = [];
-							temp.rarity = [];
-							temp.rarity.push("4");
-							temp.names.push(name);
-						} else {
-							temp.imgs.push(response.data.IpfsHash);
-							temp.names.push(name);
-							temp.width = newWidth;
-
-							temp.height = newHeight;
-							temp.rarity.push("4");
-
-							let tempSizesWidth = temp.sizes.width;
-							tempSizesWidth.push(newWidth);
-
-							let tempSizesHeight = temp.sizes.height;
-							tempSizesHeight.push(newHeight);
-
-							temp.sizes = {
-								width: tempSizesWidth,
-								height: tempSizesHeight,
-							};
-
-							// if(width < newWidth ) {
-							// 	setWidth(newWidth);
-							// 	console.log(width);
-							// }
-							// if(height < newHeight ) {
-							// 	setHeight(newHeight);
-							// }
-							// setWidth(width);
-							// changeError("width", width);
-							// setHeight(height);
-							// changeError("height", height);
-							// if ((temp.height == image.height && temp.width == image.width)) {
-							// 	temp.imgs.push(src);
-							// } else {
-							// 	setErrorModal({
-							// 		hidden: true,
-							// 		message: "Your images are different sizes",
-							// 	});
-							// }
-						}
-					}
-					tempArr.push(temp);
-				}
-
-				let maxW = Math.max.apply(null, tempArr[curentLayer].sizes.width);
-				let maxH = Math.max.apply(null, tempArr[curentLayer].sizes.height);
-
-				if (width < maxW) {
-					setWidth(maxW);
-				}
-				if (height < maxH) {
-					setHeight(maxH);
-				}
-				// setHeight(Math.max.apply(null, tempArr[curentLayer].sizes.height));
-				// TODO : 123
-				//setClassArr1(tempArr);
-			})
-			.catch(function (error) {
-				//handle error here
-				console.error(error);
-			});
-	};
-
-	function handleFile(e) {
-		const fileReader = new FileReader();
-		fileReader.readAsText(e.target.files[0], "UTF-8");
-		fileReader.onload = (e) => {
-			const data = JSON.parse(e.target.result);
-			setProjectName(data.projectName || "");
-			setCollectionName(data.collectionName || "");
-			setProjectDescription(data.projectDescription || "");
-			setWidth(data.width);
-			setHeight(data.height);
-			setClassArr1(data.classArr);
-
-			//setFiles(e.target.result);
-		};
-	}
 
 	// new layer instance
 	function newClass(name, active, imgsL, x, y, z) {
 		for (let i = 0; i < classArr1.length; i++) {
 			if (classArr1[i].name == name) {
-				setErrorModal({
-					hidden: true,
-					message: "Give a unique name",
-				});
+				openError("Give a unique name.");
 				return;
 			}
 		}
@@ -786,16 +280,11 @@ function LoadNftPage() {
 		let tempArr = Object.values(classArr1);
 		tempArr.push(temp);
 
-		// TODO : 123
 		setClassArr1(tempArr);
-
-		// classArr.push(temp);
-		// setClassArr1(classArr);
 
 		let curImg = curentImages;
 		curImg.push(0);
 		setCurentImages(curImg);
-		//temp.logName();
 	}
 
 	// switching active layer
@@ -812,7 +301,6 @@ function LoadNftPage() {
 				tempArr.push(temp);
 			}
 		}
-		// TODO : 123
 		setClassArr1(tempArr);
 	}
 
@@ -830,7 +318,6 @@ function LoadNftPage() {
 			}
 		}
 
-		//curImg[curentLayer] = index;
 		setCurentImages(curImg);
 	}
 
@@ -863,20 +350,9 @@ function LoadNftPage() {
 		for (let i = 0; i < event.target.files.length; i++) {
 			let file = event.target.files[i];
 
-			// if (event.target.files[0].size / 1024 / 1024 > 5) {
-			// 	setErrorModal({
-			// 		hidden: true,
-			// 		message: "Image is larger than 5MB",
-			// 	});
-			// 	return;
-			// }
-
-			// let requestDB = db.transaction("imgs", "readwrite").objectStore("imgs");
-
 			const openRequest = window.indexedDB.open("imgsStore", 10);
 
 			console.log(openRequest);
-
 
 			openRequest.onerror = event => {
 				console.log(event);
@@ -907,11 +383,9 @@ function LoadNftPage() {
 
 				console.log(resRequest);
 
-				// console.log(URL.createObjectURL(resRequest));
 
 				try{
 					lastId = id;
-					// lastId = resRequest[i].id;
 				}catch {
 					lastId = 0;
 				}
@@ -926,14 +400,7 @@ function LoadNftPage() {
 					image.src = e.target.result;
 					image.onload = async function () {
 						let name = file.name.substring(0, file.name.indexOf("."));
-						// await pinFileToIPFS(
-						// 	pinataKey,
-						// 	pinataSecretKey,
-						// 	event.target.files[i],
-						// 	this.width,
-						// 	this.height,
-						// 	name,
-						// );
+						
 
 						let newWidth = this.width;
 						let newHeight = this.height;
@@ -944,10 +411,7 @@ function LoadNftPage() {
 							let temp = classArr1[i];
 							if (classArr1[curentLayer].name == classArr1[i].name) {
 								if (temp.imgs[0] == undefined) {
-									// setWidth(newWidth);
-									// // changeError("width", width);
-									// setHeight(newHeight);
-									// changeError("height", height);
+									
 
 									temp.imgs = [];
 									temp.imgs.push(lastId);
@@ -982,25 +446,6 @@ function LoadNftPage() {
 										height: tempSizesHeight,
 									};
 
-									// if(width < newWidth ) {
-									// 	setWidth(newWidth);
-									// 	console.log(width);
-									// }
-									// if(height < newHeight ) {
-									// 	setHeight(newHeight);
-									// }
-									// setWidth(width);
-									// changeError("width", width);
-									// setHeight(height);
-									// changeError("height", height);
-									// if ((temp.height == image.height && temp.width == image.width)) {
-									// 	temp.imgs.push(src);
-									// } else {
-									// 	setErrorModal({
-									// 		hidden: true,
-									// 		message: "Your images are different sizes",
-									// 	});
-									// }
 								}
 							}
 							tempArr.push(temp);
@@ -1018,190 +463,15 @@ function LoadNftPage() {
 						if (height < maxH) {
 							setHeight(maxH);
 						}
-						// setHeight(Math.max.apply(null, tempArr[curentLayer].sizes.height));
 						localStorage.setItem("class", JSON.stringify(tempArr));
 						localStorage.setItem("width", maxW);
 						localStorage.setItem("height", maxH);
-						// TODO : 123
 						setClassArr1(tempArr);
 					};
 				};
-
-				// store.getAll().onerror = (ev) => {
-				// 	console.log(ev);
-				// }
-
-				store.getAll().onsuccess = (event) => {
-					console.log(event);
-					// lastId;
-					try{
-						lastId = event.target.result[event.target.result.length - 1].id;
-					}catch {
-						lastId = 0;
-					}
-					tempBlob = URL.createObjectURL(file);
-
-					var reader = new FileReader();
-					reader.readAsDataURL(file);
-					reader.onload = function (e) {
-						var image = new Image();
-
-						image.src = e.target.result;
-						image.onload = async function () {
-							let name = file.name.substring(0, file.name.indexOf("."));
-							// await pinFileToIPFS(
-							// 	pinataKey,
-							// 	pinataSecretKey,
-							// 	event.target.files[i],
-							// 	this.width,
-							// 	this.height,
-							// 	name,
-							// );
-
-							let newWidth = this.width;
-							let newHeight = this.height;
-
-							let tempArr = [];
-							for (let i = 0; i < classArr1.length; i++) {
-								let temp = classArr1[i];
-								if (classArr1[curentLayer].name == classArr1[i].name) {
-									if (temp.imgs[0] == undefined) {
-										// setWidth(newWidth);
-										// // changeError("width", width);
-										// setHeight(newHeight);
-										// changeError("height", height);
-
-										temp.imgs = [];
-										temp.imgs.push(lastId);
-										temp.url = [tempBlob];
-										temp.width = newWidth;
-										temp.height = newHeight;
-										temp.sizes = {
-											width: [newWidth],
-											height: [newHeight],
-										};
-										temp.names = [];
-										temp.rarity = [];
-										temp.rarity.push("4");
-										temp.names.push(name);
-									} else {
-										temp.imgs.push(lastId);
-										temp.names.push(name);
-										temp.url.push(tempBlob);
-										temp.width = newWidth;
-
-										temp.height = newHeight;
-										temp.rarity.push("4");
-
-										let tempSizesWidth = temp.sizes.width;
-										tempSizesWidth.push(newWidth);
-
-										let tempSizesHeight = temp.sizes.height;
-										tempSizesHeight.push(newHeight);
-
-										temp.sizes = {
-											width: tempSizesWidth,
-											height: tempSizesHeight,
-										};
-
-										// if(width < newWidth ) {
-										// 	setWidth(newWidth);
-										// 	console.log(width);
-										// }
-										// if(height < newHeight ) {
-										// 	setHeight(newHeight);
-										// }
-										// setWidth(width);
-										// changeError("width", width);
-										// setHeight(height);
-										// changeError("height", height);
-										// if ((temp.height == image.height && temp.width == image.width)) {
-										// 	temp.imgs.push(src);
-										// } else {
-										// 	setErrorModal({
-										// 		hidden: true,
-										// 		message: "Your images are different sizes",
-										// 	});
-										// }
-									}
-								}
-								tempArr.push(temp);
-							}
-
-							let maxW = Math.max.apply(null, tempArr[curentLayer].sizes.width);
-							let maxH = Math.max.apply(
-								null,
-								tempArr[curentLayer].sizes.height,
-							);
-
-							if (width < maxW) {
-								setWidth(maxW);
-							}
-							if (height < maxH) {
-								setHeight(maxH);
-							}
-							// setHeight(Math.max.apply(null, tempArr[curentLayer].sizes.height));
-							localStorage.setItem("class", JSON.stringify(tempArr));
-							localStorage.setItem("width", maxW);
-							localStorage.setItem("height", maxH);
-							// TODO : 123
-							setClassArr1(tempArr);
-						};
-					};
-				};
+				
 			};
 
-			// requestDB.add(file);
-
-			// var image = new Image();
-			// image.src = URL.createObjectURL(file);
-			// console.log(file, image.width, image.height);
-			// image.onload = async function () {
-			// 	// console.log(file, image.width, image.height);
-
-			// 	let name = file.name.substring(0, file.name.indexOf("."));
-
-			// 	await pinFileToIPFS(
-			// 		pinataKey,
-			// 		pinataSecretKey,
-			// 		event.target.files[i],
-			// 		image.width,
-			// 		image.height,
-			// 		name,
-			// 	);
-			// };
-
-			// var reader = new FileReader();
-			// reader.readAsDataURL(file);
-			// reader.onload = function (e) {
-			// 	var image = new Image();
-
-			// 	// console.log(e.target.result);
-
-			// 	image.src = e.target.result;
-			// 	image.onload = async function () {
-			// 		var height = this.height;
-			// 		var width = this.width;
-
-			// 		let name = file.name.substring(0, file.name.indexOf("."));
-			// 		await pinFileToIPFS(
-			// 			pinataKey,
-			// 			pinataSecretKey,
-			// 			event.target.files[i],
-			// 			this.width,
-			// 			this.height,
-			// 			name,
-			// 		);
-			// 		// console.log(this);
-			// 		// if ((height >= 1024 || height <= 1100) && (width >= 750 || width <= 800)) {
-			// 		// 	alert("Height and Width must not exceed 1100*800.");
-			// 		// 	return false;
-			// 		// }
-			// 		// alert("Uploaded image has valid Height and Width.");
-			// 		// return true;
-			// 		// return;
-			// 	};
-			// };
 		}
 	}
 
@@ -1220,7 +490,6 @@ function LoadNftPage() {
 			store.delete(idDel);
 		};
 
-		// let request = db.transaction("imgs", "readwrite").objectStore("imgs").delete(classArr1[curentLayer].imgs[index]);
 
 		for (let i = 0; i < classArr1.length; i++) {
 			let temp = classArr1[i];
@@ -1233,15 +502,8 @@ function LoadNftPage() {
 			let tempArrImgSizeH = [];
 			if (classArr1[curentLayer].name == classArr1[i].name) {
 				for (let j = 0; j < classArr1[i].imgs.length; j++) {
-					// if(maxWidth < classArr1[i].width) {
-					// 	maxWidth = classArr1[i].width;
-					// }
-					// if(maxHeight < classArr1[i].height) {
-					// 	maxHeight = classArr1[i].height;
-					// }
-
+					
 					if (classArr1[i].imgs[j] != classArr1[i].imgs[index]) {
-						//console.log(1);
 
 						tempArrImg.push(classArr1[curentLayer].imgs[j]);
 						tempArrUrl.push(classArr1[curentLayer].url[j]);
@@ -1260,14 +522,10 @@ function LoadNftPage() {
 					width: tempArrImgSizeW,
 					height: tempArrImgSizeH,
 				};
-				//setSizeImgs(tempArrImgSize);
 			}
 
 			tempArr.push(temp);
 		}
-		// for(let i)
-		// setWidth(maxWidth);
-		// setHeight(maxHeight);
 
 		let maxWidth = 0;
 		let maxHeight = 0;
@@ -1288,36 +546,14 @@ function LoadNftPage() {
 		setHeight(maxHeight);
 
 		localStorage.setItem("class", JSON.stringify(tempArr));
-		// TODO :123
 		setClassArr1(tempArr);
-	}
-
-	function changeRarity(rarity) {
-		let tempArr = [];
-
-		for (let i = 0; i < classArr1.length; i++) {
-			let temp = classArr1[i];
-			if (curentLayer == i) {
-				for (let j = 0; j < classArr1[i].rarity.length; j++) {
-					if (curentImages[curentLayer] == j) {
-						temp.rarity[j] = rarity;
-					}
-				}
-			}
-			tempArr.push(temp);
-		}
-		// TODO :123
-		//setClassArr1(tempArr);
 	}
 
 	// Changing the name of a layer
 	function setNewLayerName(event) {
 		for (let i = 0; i < classArr1.length; i++) {
 			if (classArr1[i].name == event.target.value) {
-				setErrorModal({
-					hidden: true,
-					message: "Give a unique name",
-				});
+				openError("Give a unique name");
 				return;
 			}
 		}
@@ -1332,150 +568,54 @@ function LoadNftPage() {
 			}
 			tempArr.push(temp);
 		}
-		// TODO :123
 		setClassArr1(tempArr);
-	}
-
-	function getBase64Image(src) {
-		var img = new Image();
-		img.src = src;
-		img.onload = function () {
-			var canvas = document.createElement("canvas");
-			canvas.width = img.width;
-			canvas.height = img.height;
-
-			var ctx = canvas.getContext("2d");
-			ctx.drawImage(img, 0, 0);
-
-			var dataURL = canvas.toDataURL("image/png");
-
-			return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-		};
-	}
-
-	async function getSrc(src) {
-		let store = db.transaction("imgs").objectStore("imgs");
-
-		store.get(src).onsuccess = async (event) => {
-			let res = await URL.createObjectURL(event.target.result);
-			return res;
-		};
-		// return "https://cloudflare-ipfs.com/ipfs/" + src;
 	}
 
 	// Loading intermediate data
 	function logData() {
 		for (let i = 0; i < classArr1.length; i++) {
 			if (classArr1[i].imgs[0] == undefined) {
-				setErrorModal({
-					hidden: true,
-					message: "Each layer must contain at least 1 image.",
-				});
+				openError("Each layer must contain at least 1 image.");
 				return;
 			}
 		}
 
 		if (width <= 0 || width == undefined || width != parseInt(width, 10)) {
 			setErrorInput("width");
-			// setErrorModal({
-			// 	hidden: true,
-			// 	message: "Enter size",
-			// });
+			
 			return false;
 		}
 
 		if (height <= 0 || height == undefined || height != parseInt(height, 10)) {
 			setErrorInput("height");
-			// setErrorModal({
-			// 	hidden: true,
-			// 	message: "Enter size",
-			// });
+			
 			return false;
 		}
-
-		// if (width > maxSize || height > maxSize) {
-		// 	setErrorModal({
-		// 		hidden: true,
-		// 		message:
-		// 			"The size is too large. The maximum size of the nft must not exceed " +
-		// 			maxSize +
-		// 			"px by " +
-		// 			maxSize +
-		// 			"px",
-		// 	});
-		// 	return false;
-		// }
-
-		// if (width/height > 2) {
-		// 	setErrorModal({
-		// 		hidden: true,
-		// 		message: "The aspect ratio must be no more than 4:2",
-		// 	});
-		// 	return;
-		// }
-
-		// if (width/height < 0.5) {
-		// 	setErrorModal({
-		// 		hidden: true,
-		// 		message: "The aspect ratio must be no more than 2:4",
-		// 	});
-		// 	return;
-		// }
 
 		let tempCollectionName = "";
 		let tempProjectName = "";
 		let tempProjectDescription = "";
 
 		if (collectionName === "" || collectionName === undefined) {
-			// setErrorModal({
-			// 	hidden: true,
-			// 	message: "Set collection name",
-			// });
-
-			// setErrorInput("colName");
-
 			setCollectionName("No Name");
 			tempCollectionName = "No Name";
-			// return;
 		} else {
 			tempCollectionName = collectionName;
 		}
 
 		if (projectName === "" || projectName === undefined) {
-			// setErrorModal({
-			// 	hidden: true,
-			// 	message: "Set project name",
-			// });
-
-			// setProjectName("Project Name");
-
 			setProjectName("Project Name");
 			tempProjectName = "Project Name";
-			// return;
 		} else {
 			tempProjectName = projectName;
 		}
 
 		if (projectDescription === "" || projectDescription === undefined) {
-			// setErrorModal({
-			// 	hidden: true,
-			// 	message: "Set project description",
-			// });
-
-			// setErrorInput("colDesc");
-
 			setProjectDescription("Project Description");
 			tempProjectDescription = "Project Description";
-			// return;
 		} else {
 			tempProjectDescription = projectDescription;
 		}
-
-
-
-		console.log(tempCollectionName,tempProjectName,tempProjectDescription);
-
-		// return;
 
 		localStorage.setItem("class", JSON.stringify(classArr1));
 		localStorage.setItem("width", width);
@@ -1491,111 +631,6 @@ function LoadNftPage() {
 		);
 
 		return true;
-		// setRedirect(true);
-	}
-
-	async function downloadUrl() {
-		const pinataKey = "0a2ed9f679a6c395f311";
-		const pinataSecretKey =
-			"7b53c4d13eeaf7063ac5513d4c97c4f530ce7e660f0c147ab5d6aee6da9a08b9";
-		var image = new Image();
-		image.src = urlImg;
-
-		await fetch(urlImg, {
-			mode: "no-cors",
-			// headers: {
-			// 	"Content-Type": "application/json",
-
-			// },
-		})
-			.then((res) => res.blob())
-			.then((blob) => {
-				const file = new File([blob], "File name", {type: "image/png"});
-
-				const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
-
-				let data = new FormData();
-
-				data.append("file", file);
-				var image = new Image();
-				image.src = URL.createObjectURL(file);
-
-				return axios
-					.post(url, data, {
-						maxBodyLength: "Infinity",
-						headers: {
-							"Content-Type": `multipart/form-data; boundary=${data._boundary}`,
-							pinata_api_key: pinataKey,
-							pinata_secret_api_key: pinataSecretKey,
-						},
-					})
-					.then(async function (response) {
-						// let tempArr = [];
-						// for (let i = 0; i < classArr1.length; i++) {
-						// 	let temp = classArr1[i];
-						// 	if (classArr1[curentLayer].name == classArr1[i].name) {
-						// 		if (temp.imgs[0] == undefined) {
-						// 			console.log("empty");
-						// 			setWidth(width);
-						// 			setHeight(height);
-						// 			temp.imgs = [];
-						// 			temp.imgs.push(response.data.IpfsHash);
-						// 			temp.width = width;
-						// 			temp.height = height;
-						// 			temp.names = [];
-						// 			temp.rarity = [];
-						// 			temp.rarity.push("4");
-						// 			temp.names.push("Name");
-						// 		} else {
-						// 			temp.imgs.push(response.data.IpfsHash);
-						// 			temp.names.push("Name");
-						// 			temp.rarity.push("4");
-						// 			// if ((temp.height == image.height && temp.width == image.width)) {
-						// 			// 	temp.imgs.push(src);
-						// 			// } else {
-						// 			// 	setErrorModal({
-						// 			// 		hidden: true,
-						// 			// 		message: "Your images are different sizes",
-						// 			// 	});
-						// 			// }
-						// 		}
-						// 	}
-						// 	tempArr.push(temp);
-						// }
-						// console.log(tempArr);
-						// setClassArr1(tempArr);
-					});
-			});
-	}
-
-	function closeError() {
-		setErrorModal({
-			hidden: false,
-			message: "",
-		});
-	}
-
-	// function summImgs() {
-	// 	let temp = 0;
-	// 	for(let i = 0; i < sizeImgs.length; i++) {
-	// 		temp += Number(sizeImgs[i]);
-	// 		//console.log(sizeImgs);
-	// 	}
-	// 	return temp;
-	// }
-
-	// function pinataFunc() {
-	// 	pinata.testAuthentication().then((result) => {
-	// 		//handle successful authentication here
-	// 		console.log(result);
-	// 	}).catch((err) => {
-	// 		//handle error here
-	// 		console.log(err);
-	// 	});
-	// }
-
-	function close() {
-		dispatch({type: "closeConnect"});
 	}
 
 	// Tracking blank fields (outdated)
@@ -1649,15 +684,7 @@ function LoadNftPage() {
 
 	return (
 		<Router>
-			<div
-				className={
-					errorModal.hidden === true || connect === true || connectWallet
-						? "error-bg"
-						: "hide"
-				}
-			>
-				<span className={connectWallet ? "" : "hide"} onClick={close}></span>
-			</div>
+			
 			<div className={videoPlay ? "video-player" : "hide"}>
 				<button className="close" onClick={() => setVideoPlay(false)}>
 					<span></span>
@@ -1675,85 +702,25 @@ function LoadNftPage() {
 				</div>
 			</div>
 			<div
-				className={
-					errorModal.hidden === true || connect === true || connectWallet
-						? "App-error"
-						: "App App2"
-				}
+				className={"App App2"}
 			>
+				<ErrorModal/>
+
 				<Header activeCat={1}></Header>
 
 				<div className="constructors">
 					<div className="container-header">
-						<div
-							className={errorModal.hidden === true ? "error-modal" : "hide"}
-						>
-							<button className="close" onClick={closeError}>
-								<span></span>
-								<span></span>
-							</button>
-							<div className="message">{errorModal.message}</div>
-							<button className="button-3-square" onClick={closeError}>
-								OK
-							</button>
-						</div>
+
+						<HeaderEditor classArr={classArr1} projectData={{
+							width,
+							height,
+							curentLayer,
+							projectDescription,
+							projectName,
+							collectionName
+						}} activeStep={1} />
 
 						<div className="modal-constructor modal-constructor-layers">
-							<div className="title-1">NFT Collection Editor</div>
-
-							{/* <button onClick={async ()=>{
-								console.log("test");
-								const id = await dbDexie.imgs.add({value: "test"});
-
-								console.log(id);
-							}}>test</button> */}
-
-							<div class="steps mobile-steps">
-								<div class="step  step-hov step1 active">
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 1</div>
-										<div class="desc">Upload images</div>
-									</div>
-								</div>
-								<div class="line"></div>
-								<div
-									class="step  step-hov step2"
-									onClick={() => {
-										let res = logData();
-										if (res && checkLimit()) {
-											history.push("/nft-customization");
-										}
-									}}
-								>
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 2</div>
-										<div class="desc">Customize layers</div>
-									</div>
-								</div>
-								<div class="line"></div>
-								<div
-									class="step  step-hov step3"
-									onClick={() => {
-										let res = logData();
-										if (
-											res &&
-											checkLimit() &&
-											localStorage.getItem("nftAreaSize") !== undefined &&
-											localStorage.getItem("nftAreaSize") !== null
-										) {
-											history.push("/nft-generate");
-										}
-									}}
-								>
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 3</div>
-										<div class="desc">Create Collection</div>
-									</div>
-								</div>
-							</div>
 
 							<div className="title">Layers</div>
 							<div className="text">Add/Edit layers</div>
@@ -1822,52 +789,7 @@ function LoadNftPage() {
 							</div>
 						</div>
 						<div className="modal-constructor modal-constructor-upload">
-							<div class="steps steps-desk">
-								<div class="step  step-hov step1 active">
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 1</div>
-										<div class="desc">Upload images</div>
-									</div>
-								</div>
-								<div class="line"></div>
-								<div
-									class="step  step-hov step2"
-									onClick={() => {
-										let res = logData();
-										if (checkLimit() && res ) {
-											history.push("/nft-customization");
-										}
-									}}
-								>
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 2</div>
-										<div class="desc">Customize layers</div>
-									</div>
-								</div>
-								<div class="line"></div>
-								<div
-									class="step  step-hov step3"
-									onClick={() => {
-										let res = logData();
-										if (
-											res &&
-											checkLimit() &&
-											localStorage.getItem("nftAreaSize") !== undefined &&
-											localStorage.getItem("nftAreaSize") !== null
-										) {
-											history.push("/nft-generate");
-										}
-									}}
-								>
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 3</div>
-										<div class="desc">Create Collection</div>
-									</div>
-								</div>
-							</div>
+							
 
 							<div class="video-start">
 								Need Help? &nbsp;{" "}
@@ -1895,9 +817,6 @@ function LoadNftPage() {
 									{classArr1.length > 0 &&
 										classArr1[curentLayer].imgs.map((item, index) => {
 											console.log(classArr1, curentLayer);
-											// console.log("WTFF", JSON.parse(JSON.stringify(classArr1)))
-											// console.log("WTF1",classArr1)
-											// console.log("WTF2",classArr1[curentLayer].url[index])
 											return (
 												<div
 													key={"uniqueId" + index}
@@ -1916,9 +835,6 @@ function LoadNftPage() {
 														<span></span>
 													</div>
 													<img src={classArr1[curentLayer].url[index]}></img>
-													{/* <div className="name">
-													{classArr1[curentLayer].names[index]}
-												</div> */}
 												</div>
 											);
 										})}
@@ -1940,19 +856,9 @@ function LoadNftPage() {
 										You can select multiple images at once
 									</span>
 								</label>
-								{/* <input className="text" type="file" onChange={(ev) => download(ev.target)}/> */}
-								{/* Click or drop images here!
-								(image/png, image/gif, video/mp4, Max size: 10MB) */}
-								{/* </input> */}
-								{/* <button type="button" onClick={logImgs}>Log imgs</button> */}
+								
 							</div>
-							{/* <div>
-								<div className="text">Download the image from the link</div>
-								<input className="input" onChange={(ev)=>{
-									setUrlImg(ev.target.value);
-								}}/>
-								<button className="button-1-square" onClick={downloadUrl}>Add</button>
-							</div> */}
+							
 							<div
 								className={
 									activeNext ? "button-1-square" : "button-1-square unactive"
@@ -1976,41 +882,7 @@ function LoadNftPage() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-settings">
-							{/* <div className="import">Import Project</div> */}
-
-							{/* <div class="import-buttons">
-								<div class="new"></div>
-								<div class="import"></div>
-								<div class="save"></div>
-							</div> */}
-
-							{/* <ImportButtons/> */}
-
-							<div class="import-buttons">
-								<div onClick={newProject} class="new"></div>
-								{/* <div onClick={loadProject} class="import"></div> */}
-								<div class="form-item">
-									<input
-										className="form-item__input"
-										type="file"
-										id="files"
-										accept=".json"
-										onChange={loadProject}
-									/>
-									<label class="form-item__label" for="files"></label>
-								</div>
-								<div onClick={saveProject} class="save"></div>
-							</div>
-
-							{/* <Box className="import" type="button" component="label">
-								Import Project
-								<input
-									type="file"
-									accept=".json"
-									hidden
-									onChange={handleFile}
-								/>
-							</Box>  */}
+							
 							<div className="project-settings">
 								<div className="title">
 									Project details{" "}
@@ -2140,41 +1012,11 @@ function LoadNftPage() {
 									<button onClick={()=>console.log(width)}>test2</button> */}
 								</div>
 
-								{/* <div className="title">Element Settings</div>
-								<div className="text">Change your element settings</div>
-								<div className="setting">
-									<div className="title-settings">Rarity</div>
-									{classArr1[curentLayer].imgs.map((item, index) => {
-										return (
-											<input
-												key={"uniqueId"+index}
-												className={
-													curentImages[curentLayer] == index ? "" : "hide"
-												}
-												type="range"
-												min="0"
-												max="4"
-												step="1"
-												value={classArr1[curentLayer].rarity[index]}
-												onChange={() => changeRarity(event.target.value)}
-											/>
-										);
-									})}
-
-									<div className="grades">
-										<span className="legendary">Legendary</span>
-										<span className="epic">Epic</span>
-										<span className="rare">Rare</span>
-										<span className="uncommon">Unusual</span>
-										<span className="common">Usual</span>
-									</div>
-								</div> */}
+								
 							</div>
 						</div>
 						<div className="break"></div>
-						{/* <a href="#/nft-customization"><div className="next" onClick={logData}>Next</div></a> */}
 
-						{redirect ? <Redirect to="/nft-customization" /> : ""}
 					</div>
 				</div>
 

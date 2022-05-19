@@ -1,44 +1,15 @@
-import React, {useState} from "react";
-import {HashRouter as Router, Redirect} from "react-router-dom";
-//import {main_screen_bg} from "../sdk/img/screenbg1.png"
+import React from "react";
+import {HashRouter as Router} from "react-router-dom";
 
 import Header from "./Header";
 import Footer from "./Footer";
 
-import {useDispatch, useSelector} from "react-redux";
-
 function HowPage() {
-	const dispatch = useDispatch();
-	const connectWallet = useSelector((state) => state.connectWallet);
-	const [curentMode, setCurentMode] = useState(0);
-
-	const [redirect, setRedirect] = useState([false, false]);
-
-	function next() {
-		let temp = [];
-		for (let i = 0; i < redirect.length; i++) {
-			let tempVal = redirect[i];
-			if (i == curentMode) {
-				tempVal = true;
-			} else {
-				tempVal = false;
-			}
-			temp.push(tempVal);
-		}
-		setRedirect(temp);
-	}
-
-	function close() {
-		dispatch({type: "closeConnect"});
-		console.log(connectWallet);
-	}
 
 	return (
 		<Router>
-			<div className={connectWallet ? "error-bg" : "hide"}>
-				<span onClick={close}></span>
-			</div>
-			<div className={connectWallet ? "App-error" : "App2"}>
+		
+			<div className={"App2"}>
 				<Header activeCat={3}></Header>
 
 				<div className="start-screen">
@@ -140,9 +111,6 @@ function HowPage() {
 						</div>
 					</div>
 				</div>
-
-				{redirect[0] ? <Redirect to="/load-nft" /> : ""}
-				{redirect[1] ? <Redirect to="/collection-market" /> : ""}
 
 				<Footer></Footer>
 			</div>

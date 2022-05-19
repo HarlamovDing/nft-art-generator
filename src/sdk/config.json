@@ -8,7 +8,8 @@
 	"contractRootNft-oldCol": "dev-1649955546633-94708956977447",
 	"contractRootNft1old": "blender1.testnet",
 	"contractNft": "dev-1646972874579-36142488542328",
-	"marketNft": "dev-1648581158866-16348149344133",
+	"marketNftOld": "dev-1648581158866-16348149344133",
+	"marketNft": "market-nft.testnet",
 	"singleNFt": "dev-1649669626808-71116101604821",
 	"nearConfig": {
 		"networkId": "testnet",

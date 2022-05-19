@@ -201,7 +201,7 @@ function Header({activeCat}) {
 					zIndex: "10",
 				}}
 			>
-				V18.05/14:00
+				V19.05/17:00
 			</span>
 			<div className="header header2">
 				<div className="container-header">
@@ -279,7 +279,7 @@ function Header({activeCat}) {
 									Marketplace
 								</div>
 							</a>
-							<a href="#/how">
+							{/* <a href="#/how">
 								<div
 									className={
 										activeCat == 3 ? "page-element active" : "page-element"
@@ -287,7 +287,7 @@ function Header({activeCat}) {
 								>
 									FAQ
 								</div>
-							</a>
+							</a> */}
 						</div>
 
 						<div className={mobMenu ? "pages-m pages-m-active" : "pages-m"}>
@@ -318,7 +318,7 @@ function Header({activeCat}) {
 									Marketplace
 								</div>
 							</a>
-							<a href="#/how">
+							{/* <a href="#/how">
 								<div
 									className={
 										activeCat == 3 ? "page-element active" : "page-element"
@@ -326,7 +326,7 @@ function Header({activeCat}) {
 								>
 									FAQ
 								</div>
-							</a>
+							</a> */}
 
 							<span
 								onClick={() => setMobMenu(!mobMenu)}

@@ -1,72 +1,19 @@
-import React, {useState, PropTypes} from "react";
-// import {connect, useSelector} from "react-redux";
+import React from "react";
 import {HashRouter as Router, useHistory} from "react-router-dom";
-//import {main_screen_bg} from "../sdk/img/screenbg1.png"
-import ConnectWalletPage from "./ConnectWalletPage";
 import Header from "./Header";
 import Footer from "./Footer";
 
-import {useDispatch, useSelector} from "react-redux";
-
 import {
 	Link,
-	Button,
 	Element,
-	Events,
-	animateScroll as scroll,
-	scrollSpy,
-	scroller,
 } from "react-scroll";
-
-import {dbDexie} from "./db.js";
-
-const pidCrypt = require("pidcrypt");
-require("pidcrypt/aes_cbc");
 
 function WelcomeNftPage() {
 	let history = useHistory();
 
-	const dispatch = useDispatch();
-
-	const connectWallet = useSelector((state) => state.connectWallet);
-
-	const [connectWal, setConnect] = useState(false);
-
-	function handleConnectClick() {
-		console.log(1);
-		setConnect(true);
-	}
-
-	const [openMenu, setOpenMenu] = useState(false);
-
-	const aes = new pidCrypt.AES.CBC();
-
-	function logOut(e) {
-		e.preventDefault();
-		console.log(1);
-		sessionStorage.clear();
-		location.reload();
-	}
-
-	function addCash() {
-		dispatch({type: "openConnect"});
-	}
-
-	function close() {
-		dispatch({type: "closeConnect"});
-		console.log(connectWallet);
-	}
-
-	function logCash() {
-		console.log(connectWallet);
-	}
-
 	return (
 		<Router>
-			<div className={connectWallet ? "error-bg" : "hide"}>
-				<span onClick={close}></span>
-			</div>
-			<div className={connectWallet ? "App-error" : "App"}>
+			<div className={"App"}>
 				<Header activeCat={0}></Header>
 
 				<div className="main-screen">
@@ -74,16 +21,6 @@ function WelcomeNftPage() {
 						<div className="content">
 							<div className="title">
 								Create your own NFT collections easy and fast
-								{/* <button onClick={async ()=>{
-
-									const id = await dbDexie.imgs.add({
-										value: "name",
-										
-									});
-
-									console.log(id);
-
-								}}>Test</button> */}
 							</div>
 							<div className="text">
 								Download or generate more than 15,000 unique NFT arts with no

@@ -15,6 +15,10 @@ import App from "./App";
 
 const defaultState = {
 	connectWallet: false,
+	errorModal: {
+		hidden: true,
+		message: ""
+	}
 };
 
 import {Buffer} from "buffer";
@@ -26,6 +30,17 @@ const reducer = (state = defaultState, action) => {
 			return {...state, connectWallet: true};
 		case "closeConnect":
 			return {...state, connectWallet: false};
+
+		case "openError":
+			return {...state, errorModal: {
+				hidden: false,
+				message: action.payload
+			}};
+		case "closeError":
+			return {...state, errorModal: {
+				hidden: true,
+				message: ""
+			}};
 		default:
 			return state;
 	}

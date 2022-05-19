@@ -1,20 +1,5 @@
-import React, {useState, useEffect, PropTypes} from "react";
-import {connect} from "react-redux";
+import React, {useState, useEffect} from "react";
 import {HashRouter as Router, useParams, useHistory} from "react-router-dom";
-//import {main_screen_bg} from "../sdk/img/screenbg1.png"
-import ConnectWalletPage from "./ConnectWalletPage";
-
-import {Account} from "@tonclient/appkit";
-import {libWeb} from "@tonclient/lib-web";
-
-import {signerKeys, TonClient, signerNone} from "@tonclient/core";
-
-import {DEXClientContract} from "./test net contracts/DEXClient.js";
-
-import {DataContract} from "./collection contracts/DataContract.js";
-import {NFTMarketContract} from "./collection contracts/NftMarketContract.js";
-import {NftRootColectionContract} from "./collection contracts/NftRootColectionContract.js";
-import {IndexContract} from "./collection contracts/IndexContract.js";
 
 import Header from "./Header";
 import Footer from "./Footer";
@@ -34,14 +19,6 @@ const {
 } = require("./config.json");
 
 const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
-
-TonClient.useBinaryLibrary(libWeb);
-
-const client = new TonClient({network: {endpoints: [config.DappServer]}});
-
-const pidCrypt = require("pidcrypt");
-require("pidcrypt/aes_cbc");
-const aes = new pidCrypt.AES.CBC();
 
 function ProfilePage() {
 	useEffect(() => {
@@ -558,99 +535,6 @@ function ProfilePage() {
 			},
 		);
 
-		// let tempAcc = await new nearAPI.Account(walletConnection, walletConnection.getAccountId());
-
-		// console.log(tempAcc);
-
-		// tempAcc.functionCall({
-		// 	contractId: "1",
-		// 	methodName: "nft_approve",
-		// 	args: {
-		// 	  token_id: "tokenId",
-		// 	  account_id:" marketId",
-		// 	  msg: JSON.stringify({
-		// 		sale_conditions: {
-		// 		  near: parseNearAmount("0.01"),
-		// 		},
-		// 	  }),
-		// 	},
-		// 	gas: parseNearAmount("0.001"),
-		// 	attachedDeposit: parseNearAmount("0.01"),
-
-		// })
-
-		// contractMarket.storage_minimum_balance().then(async (data)=>{
-		// 	let deposit = data;
-
-		// 	let pubKey = JSON.parse(keyStore.localStorage.undefined_wallet_auth_key).allKeys[0];
-
-		// 	console.log(near);
-
-		// 	let status = await near.connection.provider.status();
-		// 	console.log(status);
-
-		// 	const accessKey = await near.connection.provider.query(
-		// 		`access_key/${window.walletConnection.getAccountId()}/${pubKey.toString()}`,
-		// 		"",
-		// 	);
-
-		// 	const nonce = ++accessKey.nonce;
-
-		// 	console.log(nonce, accessKey);
-
-		// 	const recentBlockHash = nearAPI.utils.serialize.base_decode(
-		// 		accessKey.block_hash,
-		// 	);
-
-		// 	console.log(recentBlockHash);
-
-		// 	console.log(nearAPI.utils.key_pair.PublicKey.fromString(pubKey));
-
-		// 	let deployData = JSON.parse(localStorage.getItem("details"));
-
-		// 	let actionsTrans = [];
-
-		// 	actionsTrans.push(
-		// 		nearAPI.transactions.functionCall(
-		// 			"storage_deposit",
-		// 			{},
-		// 			"30000000000000",
-		// 			deposit,
-		// 		),
-		// 	);
-
-		// 	actionsTrans.push(
-		// 		nearAPI.transactions.functionCall(
-		// 			"nft_approve",
-		// 			{
-		// 				token_id: nft.token_id,
-		// 				  account_id: marketNft,
-		// 				  msg: JSON.stringify({
-		// 					sale_conditions: {
-		// 					  near: parseNearAmount(salePrice),
-		// 					},
-		// 				}),
-		// 			},
-		// 			"30000000000000",
-		// 			parseNearAmount("1"),
-		// 		),
-		// 	);
-
-		// 	console.log(actionsTrans);
-
-		// 	const transaction = nearAPI.transactions.createTransaction(
-		// 		walletConnection.getAccountId(),
-		// 		nearAPI.utils.key_pair.PublicKey.fromString(pubKey),
-		// 		addr,
-		// 		nonce,
-		// 		actionsTrans,
-		// 		recentBlockHash,
-		// 	);
-
-		// 	console.log(transaction);
-
-		// });
-
 		window.contractMarket = await new nearAPI.Contract(
 			window.walletConnection.account(),
 			marketNft,
@@ -698,69 +582,6 @@ function ProfilePage() {
 		setSalePrice(0);
 	}
 
-	async function depositNft() {
-		window.contractMarket = await new nearAPI.Contract(
-			window.walletConnection.account(),
-			marketNft,
-			{
-				// View methods are read-only – they don't modify the state, but usually return some value
-				viewMethods: ["storage_minimum_balance", "storage_balance_of"],
-				// Change methods can modify the state, but you don't receive the returned value when called
-				changeMethods: ["storage_deposit"],
-				// Sender is the account ID to initialize transactions.
-				// getAccountId() will return empty string if user is still unauthorized
-				sender: window.walletConnection.getAccountId(),
-			},
-		);
-
-		// contractMarket.storage_balance_of({account_id: window.walletConnection.getAccountId()}).then((data)=> {
-		// 	console.log(data);
-		// })
-
-		contractMarket
-			.storage_minimum_balance()
-			.then(async (data) => {
-
-				contractMarket.storage_deposit({}, "30000000000000", data).catch(() => {
-					alert("Connect Wallet");
-				});
-			})
-			.catch(() => {
-				alert("Connect Wallet");
-			});
-	}
-
-	async function removeSale(nft) {
-		console.log(nft);
-
-		window.contractMarket = await new nearAPI.Contract(
-			window.walletConnection.account(),
-			marketNft,
-			{
-				// View methods are read-only – they don't modify the state, but usually return some value
-				viewMethods: ["storage_minimum_balance"],
-				// Change methods can modify the state, but you don't receive the returned value when called
-				changeMethods: ["storage_deposit", "remove_sale"],
-				// Sender is the account ID to initialize transactions.
-				// getAccountId() will return empty string if user is still unauthorized
-				sender: window.walletConnection.getAccountId(),
-			},
-		);
-
-		contractMarket
-			.remove_sale(
-				{
-					nft_contract_id: nft.addrCol,
-					token_id: nft.token_id,
-				},
-				"30000000000000",
-				"1",
-			)
-			.catch(() => {
-				alert("Connect Wallet");
-			});
-	}
-
 	async function withdraw() {
 		window.contractMarket = await new nearAPI.Contract(
 			window.walletConnection.account(),
@@ -784,92 +605,9 @@ function ProfilePage() {
 	return (
 		<Router>
 			<div
-				className={
-					connectWal || !saleModal.hidden || connectWallet ? "error-bg" : "hide"
-				}
-			>
-				{/* <span
-					className={connectWal ? "" : "hide"}
-					onClick={() => setConnect(false)}
-				></span> */}
-				<span className={connectWallet ? "" : "hide"} onClick={close}></span>
-			</div>
-			<div
-				className={
-					connectWal || !saleModal.hidden || connectWallet
-						? "App-error"
-						: "App App2"
-				}
+				className={"App App2"}
 			>
 				<Header activeCat={0}></Header>
-
-				<div className={connectWal ? "" : "hide"}>
-					<ConnectWalletPage></ConnectWalletPage>
-				</div>
-
-				<div
-					className={
-						!saleModal.hidden ? "modal-connect modal-connect-sale" : "hide"
-					}
-				>
-					<button
-						className="close"
-						onClick={() => {
-							setSalePrice(0);
-							setSaleModal({hidden: true});
-						}}
-					>
-						<span></span>
-						<span></span>
-					</button>
-
-					<div class="menu-sale">
-						<div class="menu-item auction">Auction Sale</div>
-						<div class="menu-item regular">Regular Sale</div>
-					</div>
-
-					<div class="content auction hide">
-						<div class="title">Auction Sale</div>
-						<div class="subtitle">
-							Enter the starting price, bid amount and duration of the auction
-						</div>
-						<div class="input-sale">
-							<div class="title">Starting price (NEAR)</div>
-							<input type="number" />
-						</div>
-						<div class="input-sale">
-							<div class="title">Minimum bet (NEAR)</div>
-							<input type="number" />
-						</div>
-						<div class="input-sale">
-							<div class="title">Auction time</div>
-							<input type="date" />
-						</div>
-						<div class="sale">Put up for auction</div>
-					</div>
-
-					<div class="content regular">
-						<div class="title">Regular Sale</div>
-						<div class="subtitle">
-							Enter your desired sale price, and use Sale to list the NFT for
-							sale on the marketplace
-						</div>
-						<div class="input-sale">
-							<div class="title">Price (NEAR)</div>
-							<input
-								type="number"
-								onChange={(ev) => setSalePrice(ev.target.value)}
-							/>
-						</div>
-						{/* <div class="sale" onClick={()=>depositNft(saleModal.nftInfo)}>Deposit</div> */}
-						<div
-							class="sale button-1"
-							onClick={() => saleNft(saleModal.nftInfo)}
-						>
-							Sale
-						</div>
-					</div>
-				</div>
 
 				<div class="profile">
 					<div class="container">
@@ -907,14 +645,6 @@ function ProfilePage() {
 									Reload
 								</button> */}
 
-								{/* <button onClick={()=>{
-									
-
-									console.log(document.location);
-									console.log(history.location);
-									// history.replace(history.location.pathname);
-								}}>test</button> */}
-
 								<div className={activeCat == 0 ? "items" : "hide"}>
 									{items[0]} items
 								</div>
@@ -950,13 +680,6 @@ function ProfilePage() {
 												<div class="nft-content">
 													<div class="name">{i.name}</div>
 													<div class="name-nft">{i.name}</div>
-													{/* <a href="#/nft-details">View Details</a> */}
-													{/* <button
-														class="btn-main"
-														onClick={() => removeSale(i)}
-													>
-														Remove from sale
-													</button> */}
 												</div>
 											</div>
 										);
@@ -966,26 +689,6 @@ function ProfilePage() {
 							<div
 								className={activeCat == 1 ? "nft-category collect-nft" : "hide"}
 							>
-								{/* <div className="deposit">
-									Your deposit is enough to store {depositSale.deposit} nft{" "}
-									<br />
-									You are currently selling {depositSale.sale} nft
-									{depositSale.avail ? (
-										<div>Sale available!</div>
-									) : (
-										<div>
-											Make a deposit to make a sale <br />
-											<button className="button-1-square" onClick={depositNft}>
-												Deposit
-											</button>
-										</div>
-									)}
-									Want to withdraw your deposit? <br />
-									<button className="button-1-square" onClick={withdraw}>
-										Withdraw
-									</button>
-								</div> */}
-
 								{nftCol[0].image == "Null" ? (
 									<div class="null-nft">No NFT`s</div>
 								) : (
@@ -1010,27 +713,7 @@ function ProfilePage() {
 												<div class="nft-content">
 													<div class="name">{i.name}</div>
 													<div class="name-nft">{i.name}</div>
-													{/* <a href="#/nft-details">View Details</a> */}
-													{/* {i.onSale ? (
-														<div class="onSale">On Sale</div>
-													) : (
-														<button
-															className={
-																depositSale.avail ? "btn-main" : "hide"
-															}
-															onClick={() =>
-																setSaleModal({
-																	hidden: false,
-																	addrNft: i.addrNft,
-																	image: i.image,
-																	name: i.name,
-																	nftInfo: i,
-																})
-															}
-														>
-															Sale
-														</button>
-													)} */}
+													
 												</div>
 											</div>
 										);
@@ -1043,7 +726,6 @@ function ProfilePage() {
 								<div class="null-nft">No NFT`s</div>
 							</div>
 						</div>
-						{/* <button onClick={getHash}>Test</button> */}
 					</div>
 				</div>
 

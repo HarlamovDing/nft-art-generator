@@ -1,20 +1,5 @@
 import React, {useState, useEffect} from "react";
-// import {connect} from "react-redux";
-import {HashRouter as Router, Redirect, useHistory} from "react-router-dom";
-//import {main_screen_bg} from "../sdk/img/screenbg1.png"
-import ConnectWalletPage from "./ConnectWalletPage";
-
-import {Account} from "@tonclient/appkit";
-import {libWeb} from "@tonclient/lib-web";
-
-import {signerKeys, TonClient, signerNone} from "@tonclient/core";
-
-import {DataContract} from "./collection contracts/DataContract.js";
-import {NFTMarketContract} from "./collection contracts/NftMarketContract.js";
-import {NftRootColectionContract} from "./collection contracts/NftRootColectionContract.js";
-import {IndexOfferContract} from "./collection contracts/IndexOfferContract.js";
-import {IndexContract} from "./collection contracts/IndexContract.js";
-import {OfferContract} from "./collection contracts/OfferContract.js";
+import {HashRouter as Router, useHistory} from "react-router-dom";
 
 const {
 	contractNft,
@@ -25,30 +10,12 @@ const {
 
 import * as nearAPI from "near-api-js";
 
-const {parseNearAmount} = require("near-api-js/lib/utils/format");
-
 import Header from "./Header";
 import Footer from "./Footer";
 
 import {useDispatch, useSelector} from "react-redux";
 
 const config = require("./config.json");
-
-TonClient.useBinaryLibrary(libWeb);
-
-const client = new TonClient({network: {endpoints: [config.DappServer]}});
-
-async function getClientKeys(phrase) {
-	//todo change with only pubkey returns
-	let test = await client.crypto.mnemonic_derive_sign_keys({
-		phrase,
-		path: "m/44'/396'/0'/0/0",
-		dictionary: 1,
-		word_count: 12,
-	});
-	console.log(test);
-	return test;
-}
 
 function NftMarket(props) {
 	let history = useHistory();
@@ -189,79 +156,6 @@ function NftMarket(props) {
 				}
 			});
 
-		// await fetch("http://145.239.27.218/endpoint/receiver", {
-		// 	method: "post",
-		// 	headers: {
-		// 		"Content-Type": "application/json; charset=utf-8",
-		// 		Connection: "keep-alive",
-		// 	},
-		// 	body: `
-		// {
-		// 	"receiver": {
-		// 		"receipt_receiver_account_id":"dev-1648581158866-16348149344133"
-		// 	}
-		// }
-		// `,
-		// })
-		// 	.then((data) => {
-		// 		return data.json();
-		// 	})
-		// 	.then(async (data) => {
-		// 		console.log(data);
-
-		// 		let nonUniqArr = [];
-
-		// 		for (let i = 0; i < data.length; i++) {
-		// 			nonUniqArr.push(data[i].receipt_predecessor_account_id);
-		// 		}
-
-		// 		let uniqArr = [...new Set(nonUniqArr)];
-
-		// 		console.log(uniqArr);
-
-		// 		for (let i = 0; i < uniqArr.length; i++) {
-		// 			let tempAddr = uniqArr[i];
-
-		// 			const salesUrl =
-		// 				"https://helper.nearapi.org/v1/batch/" +
-		// 				JSON.stringify([
-		// 					{
-		// 						contract: marketNft,
-		// 						method: "get_sales_by_nft_contract_id",
-		// 						args: {
-		// 							nft_contract_id: tempAddr,
-		// 						},
-		// 						batch: {
-		// 							from_index: "0", // must be name of contract arg (above)
-		// 							limit: "500", // must be name of contract arg (above)
-		// 							step: 50, // divides contract arg 'limit'
-		// 							flatten: [], // how to combine results
-		// 						},
-		// 						sort: {
-		// 							path: "metadata.issued_at",
-		// 						},
-		// 					},
-		// 				]);
-
-		// 			const headers = new Headers({
-		// 				"max-age": "1",
-		// 			});
-
-		// 			await fetch(salesUrl, {headers})
-		// 				.then((res) => {
-		// 					return res.json();
-		// 				})
-		// 				.then((data) => {
-		// 					console.log(data);
-		// 					for (let k = 0; k < data[0].length; k++) {
-		// 						sales.push(data[0][k]);
-		// 					}
-		// 				});
-		// 		}
-		// 	});
-
-		console.log(sales);
-
 		let tempCols = [];
 
 		for (let i = 0; i < sales.length; i++) {
@@ -329,18 +223,9 @@ function NftMarket(props) {
 						});
 					});
 
-					// tempCol.push({
-					// 	addrNft: "addrNFT",
-					// 	name: info.title,
-					// 	desc: info.description, //"https://cloudflare-ipfs.com/ipfs/"+
-					// 	image: mediaUrl,
-					// 	token_id: data[i].token_id,
-					// 	addrCol: data[i].nft_contract_id
-					// })
 				});
 		}
 
-		console.log(tempCols);
 		setLoader(false);
 		setCollections(tempCols);
 	}
@@ -353,51 +238,10 @@ function NftMarket(props) {
 		}
 	}, []);
 
-	function openCollection(collection) {
-		history.push("/nft-market-pack/" + collection);
-	}
 
 	function close() {
 		dispatch({type: "closeConnect"});
 		console.log(connectWallet);
-	}
-
-	async function buyNft(nft) {
-		console.log(nft);
-
-		window.contractMarket = await new nearAPI.Contract(
-			window.walletConnection.account(),
-			marketNft,
-			{
-				// View methods are read-only – they don't modify the state, but usually return some value
-				viewMethods: ["storage_minimum_balance", "storage_balance_of"],
-				// Change methods can modify the state, but you don't receive the returned value when called
-				changeMethods: ["offer"],
-				// Sender is the account ID to initialize transactions.
-				// getAccountId() will return empty string if user is still unauthorized
-				sender: window.walletConnection.getAccountId(),
-			},
-		);
-
-		console.log(window.walletConnection.getAccountId());
-
-		console.log(window.walletConnection.account());
-
-		// console.log(nft.price);
-		// console.log(parseNearAmount(nft.price.toString()));
-
-		contractMarket
-			.offer(
-				{
-					nft_contract_id: nft.addrNftCol,
-					token_id: nft.token_id,
-				},
-				"300000000000000",
-				parseNearAmount(nft.price.toString()),
-			)
-			.catch(() => {
-				alert("Connect Wallet");
-			});
 	}
 
 	function accordionChange(index) {
@@ -415,42 +259,13 @@ function NftMarket(props) {
 
 	return (
 		<Router>
-			<div
-				className={!mintNftData.hidden || connectWallet ? "error-bg" : "hide"}
-			>
-				<span onClick={close}></span>
-			</div>
+			
 			<div
 				className={
 					!mintNftData.hidden || connectWallet ? "App-error" : "App App2"
 				}
 			>
 				<Header activeCat={2}></Header>
-
-				<div
-					className={
-						mintNftData.hidden ? "hide" : "modal-connect modal-connect-first"
-					}
-				>
-					<button
-						className="close"
-						onClick={() => setMintNftData({hidden: true})}
-					>
-						<span></span>
-						<span></span>
-					</button>
-					<div className="title">Robots Collection</div>
-					<div className="mint owner">
-						Owner: <span>0:65eb...fe7b</span>{" "}
-					</div>
-					<div className="mint price">
-						Price: <span>149</span>{" "}
-					</div>
-					<div className="mint royalty">
-						Royalty for Author <span>15%</span>{" "}
-					</div>
-					<div className="button-1-square">Buy & Open Pack</div>
-				</div>
 
 				<div class="constructor-market">
 					<div class="container-header">
@@ -649,82 +464,9 @@ function NftMarket(props) {
 										})
 								)}
 
-								{/* <div className="element">
-									<div class="rarity">L</div>
-									<div class="img"></div>
-									<div class="nameCol">Untitled Coolection #1239239</div>
-									<div class="name">Roboto #2054</div>
-									<div class="subtitle">Price</div>
-									<div class="price">
-										<span></span> 10,50 NEAR
-									</div>
-								</div> */}
 							</div>
 						</div>
 					</div>
-				</div>
-
-				<div className="collections">
-					{/* <div className="collection">
-						<div className="img">
-						</div>
-						<div className="content">
-							<div className="name">Robot #23245</div>
-							<div className="rank">
-								<span>Rank:</span>100
-							</div>
-							<div className="price">
-								<span>Price:</span>149000.00
-							</div>
-							<div className="price-quality">
-								<span>Price quality:</span>50%
-							</div>
-							<div className="button-1-square" onClick={()=>openCollection("owner1", "collection1")}>Buy & Open Pack</div>
-						</div>
-					</div> */}
-
-					{/* {collections.length > 0 ? (
-						collections.map((item, index) => {
-							return (
-								<div key={"uniqueId"+index} className="collection">
-									<div className="img">
-										<img src={item.icon} />
-									</div>
-									<div className="content">
-										<div className="name">{item.name.substring(0, 40)}</div>
-										<div className="description">
-											<span>Description:</span>
-											{item.desc.substring(0, 50)}
-										</div>
-										<div className="description">
-											<span>Price:</span>
-											{item.price.toFixed(3)} NEAR
-										</div>
-										
-										<div
-											className="button-1-square"
-											onClick={() => buyNft(item)}
-										>
-											Buy
-										</div>
-									</div>
-								</div>
-							);
-						})
-					) : (
-
-						<div className={loader ? "hide" : ""}>No NFT`s</div>
-					)} */}
-
-					{/* {loader ? (
-						<div className="loader">
-							<div></div>
-							<div></div>
-							<div></div>
-						</div>
-					) : null} */}
-
-					{redirect ? <Redirect to="/collection-market-pack" /> : ""}
 				</div>
 
 				<Footer></Footer>
