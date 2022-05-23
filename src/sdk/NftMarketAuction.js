@@ -4,7 +4,7 @@ import {HashRouter as Router} from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 
-import { useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 
 function NftMarketAuction() {
 	// const dispatch = useDispatch();
@@ -32,7 +32,6 @@ function NftMarketAuction() {
 		"0:0000000000000000000000000000000000000000000000000000000000000000";
 
 	async function getCollection() {
-
 		let tempCol;
 
 		setCol(tempCol);
@@ -45,77 +44,74 @@ function NftMarketAuction() {
 
 	return (
 		<Router>
-			
-			<div
-				className={"App App2"}
-			>
+			<div className={"App App2"}>
 				<Header activeCat={2}></Header>
 
-				<div class="container auction-sale">
-					<div class="img">
-						<div class="img"></div>
-						<div class="text">
-							<div class="title">Contract Address</div>
+				<div className="container auction-sale">
+					<div className="img">
+						<div className="img"></div>
+						<div className="text">
+							<div className="title">Contract Address</div>
 							0x1dDB2C0897daF18632662E71fdD2dbDC0eB3a9Ec
 						</div>
-						<div class="text">
-							<div class="title">Token ID</div>
+						<div className="text">
+							<div className="title">Token ID</div>
 							100300666241
 						</div>
 					</div>
-					<div class="content">
-						<div class="title-col">Untitled Coolection #1239239</div>
-						<div class="title-nft">Roboto #20542040</div>
-						<div class="desc">
-							<div class="title">Description</div>
+					<div className="content">
+						<div className="title-col">Untitled Coolection #1239239</div>
+						<div className="title-nft">Roboto #20542040</div>
+						<div className="desc">
+							<div className="title">Description</div>
 							Tattooed Kitty Gang (“TKG”) is a collection of 666 badass kitty
 							gangsters, with symbol of tattoos, living in the Proud Kitty Gang
 							(“PKG”) metaverse. Each TKG is an 1/1 ID as gangster member & all
 							the joint rights.
 						</div>
-						<div class="price">
-							<div class="title">Current Bid</div>
-							<div class="price">269.8 BUSD</div>
-							<div class="buttons">
-								<div class="button">Place a Bid</div>
-								<div class="button">Buyout price</div>
+						<div className="price">
+							<div className="title">Current Bid</div>
+							<div className="price">269.8 BUSD</div>
+							<div className="buttons">
+								<div className="button">Place a Bid</div>
+								<div className="button">Buyout price</div>
 							</div>
 						</div>
-						<div class="time">
-							<div class="title">Auction ends in</div>
-							<div class="timer">
-								<div class="timer-item">
-									<div class="num">02</div>
-									<div class="text">Days</div>
+						<div className="time">
+							<div className="title">Auction ends in</div>
+							<div className="timer">
+								<div className="timer-item">
+									<div className="num">02</div>
+									<div className="text">Days</div>
 								</div>
-								<div class="timer-item">
-									<div class="num">02</div>
-									<div class="text">Hours</div>
+								<div className="timer-item">
+									<div className="num">02</div>
+									<div className="text">Hours</div>
 								</div>
-								<div class="timer-item">
-									<div class="num">02</div>
-									<div class="text">Minutes</div>
+								<div className="timer-item">
+									<div className="num">02</div>
+									<div className="text">Minutes</div>
 								</div>
-								<div class="timer-item">
-									<div class="num">02</div>
-									<div class="text">Seconds</div>
+								<div className="timer-item">
+									<div className="num">02</div>
+									<div className="text">Seconds</div>
 								</div>
 							</div>
 						</div>
 
-						<div class="history">
-							<div class="menu-history">
-								<div class="menu-item">Bid History</div>
-								<div class="menu-item">Provenance</div>
+						<div className="history">
+							<div className="menu-history">
+								<div className="menu-item">Bid History</div>
+								<div className="menu-item">Provenance</div>
 							</div>
-							<div class="content">
-								<div class="item">
-									<div class="name">
+							<div className="content">
+								<div className="item">
+									<div className="name">
 										HAL <span>Placed a bid</span>
 									</div>
-									<div class="price">242 BUSD</div>
-									<div class="date">3 hours ago</div>
-									<div class="price-rub">≈ ₽ 16,982.40</div>
+									<div className="price">242 BUSD</div>
+									<div className="date">3 hours ago</div>
+									<div className="price-rub">≈ ₽ 16,982.40</div>
 								</div>
 							</div>
 						</div>

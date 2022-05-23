@@ -273,7 +273,6 @@ function NftCustomization() {
 						realSizes[i].width[j] = realWidth;
 						realSizes[i].height[j] = realHeight;
 					}
-
 				}
 			} else if (parseInt(nftWidth, 10) < parseInt(nftHeight, 10)) {
 				let index = nftHeight / areaWidth;
@@ -368,7 +367,6 @@ function NftCustomization() {
 	var openRequest = window.indexedDB.open("imgsStore", 10);
 	localClass = JSON.parse(localStorage.getItem("class"));
 	openRequest.onsuccess = async (event) => {
-
 		let db = event.target.result;
 
 		let store = db.transaction("imgs").objectStore("imgs");
@@ -581,7 +579,6 @@ function NftCustomization() {
 				ctx.drawImage(image, 0, 0, width, height);
 				resolve(canvas.toDataURL("image/png"));
 			};
-
 		});
 	}
 
@@ -629,7 +626,7 @@ function NftCustomization() {
 		});
 
 		updateZ(editor.canvas, classArr);
-		
+
 		editor.canvas.renderAll();
 
 		//end fabric
@@ -689,43 +686,25 @@ function NftCustomization() {
 
 	return (
 		<Router>
-			<div
-				className={"App App2"}
-			>
+			<div className={"App App2"}>
 				<Header activeCat={1}></Header>
 
 				<div className="constructors">
-
 					<div className="container-header">
-
-						<HeaderEditor classArr={classArr} projectDataStep2={{
-							newSizesArr,
-							nftAreaSize,
-							nftSizeIndex,
-							curentLayer
-						}} activeStep={2} />
-
+						<HeaderEditor
+							classArr={classArr}
+							projectDataStep2={{
+								newSizesArr,
+								nftAreaSize,
+								nftSizeIndex,
+								curentLayer,
+							}}
+							activeStep={2}
+						/>
 
 						<div className="modal-constructor modal-constructor-layers ">
 							<div className="title">Layers</div>
 							<div className="text">Select a layer to Edit</div>
-							{/* {classArr.map((item, index) => {
-								return (
-									<div
-										key={"uniqueId" + index}
-										className={
-											item.active
-												? "layers-list_layer layers-list_layer-active"
-												: "layers-list_layer"
-										}
-										onClick={() => setActive(item)}
-									>
-										<div className="index">{index + 1}. </div>
-										<span>{item.name}</span>
-									</div>
-								);
-							})} */}
-
 							<br />
 							<ListDraggable
 								list={classArr}
@@ -734,7 +713,7 @@ function NftCustomization() {
 								callbackRemoveLayer={callbackRemoveLayer}
 							/>
 
-							<div style={{margin: "40px 0px 0px 0px"}} className="title">
+							<div style={{margin: "40px 0px 10px 0px"}} className="title">
 								Layer Settings
 							</div>
 							<div className="text">Change your layers settings</div>
@@ -786,11 +765,10 @@ function NftCustomization() {
 									<span className="common">Usual</span>
 								</div>
 							</div>
-
 						</div>
 
 						<div className="modal-constructor modal-constructor-position">
-							<div class="video-start">
+							<div className="video-start">
 								<span className="info"></span>Move layers to appropriate
 								position
 							</div>
@@ -824,14 +802,18 @@ function NftCustomization() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-settings">
-							
 							{classArr.map((item, index) => {
 								return (
 									<div
 										key={"uniqueId" + index}
 										className={item.active ? "project-settings" : "hide"}
 									>
-										<div className="title">
+										<div
+											className="title"
+											onClick={() => {
+												accordionChange(0);
+											}}
+										>
 											Layer Properties{" "}
 											<span
 												className={accordionHidden[0] ? "hidden" : ""}
@@ -897,10 +879,14 @@ function NftCustomization() {
 													Move to Back
 												</div>
 											</div>
-											
 										</div>
 
-										<div className="title">
+										<div
+											className="title"
+											onClick={() => {
+												accordionChange(1);
+											}}
+										>
 											Size{" "}
 											<span
 												className={accordionHidden[1] ? "hidden" : ""}
@@ -930,24 +916,15 @@ function NftCustomization() {
 														]
 													}
 												</div>
-												{/* <input
-													type="text"
-													placeholder="150"
-													onChange={(event) =>
-														setCurentWidth(event.target.value)
-													}
-												/>
-												<input
-													type="text"
-													placeholder="125"
-													onChange={(event) => {
-														setCurentHeight(event.target.value);
-													}}
-												/> */}
 											</div>
 										</div>
 
-										<div className="title">
+										<div
+											className="title mt-24"
+											onClick={() => {
+												accordionChange(2);
+											}}
+										>
 											Elements{" "}
 											<div aria-label="hint" className="hint hint--top"></div>{" "}
 											<span
@@ -979,7 +956,10 @@ function NftCustomization() {
 											</div>
 										</div>
 
-										<div className="title">
+										<div
+											onClick={() => accordionChange(3)}
+											className="title mt-24"
+										>
 											Element Settings{" "}
 											<span
 												className={accordionHidden[3] ? "hidden" : ""}

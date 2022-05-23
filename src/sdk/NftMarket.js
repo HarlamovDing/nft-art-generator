@@ -222,7 +222,6 @@ function NftMarket(props) {
 							price: sales[i].sale_conditions / 1000000000000000000000000,
 						});
 					});
-
 				});
 		}
 
@@ -237,7 +236,6 @@ function NftMarket(props) {
 			document.location.href = href;
 		}
 	}, []);
-
 
 	function close() {
 		dispatch({type: "closeConnect"});
@@ -259,7 +257,6 @@ function NftMarket(props) {
 
 	return (
 		<Router>
-			
 			<div
 				className={
 					!mintNftData.hidden || connectWallet ? "App-error" : "App App2"
@@ -267,9 +264,9 @@ function NftMarket(props) {
 			>
 				<Header activeCat={2}></Header>
 
-				<div class="constructor-market">
-					<div class="container-header">
-						<div class="modal-constructor modal-constructor-filter">
+				<div className="constructor-market">
+					<div className="container-header">
+						<div className="modal-constructor modal-constructor-filter">
 							<div className="title-1">Marketplace</div>
 
 							<div className="title">
@@ -303,14 +300,18 @@ function NftMarket(props) {
 							<div className="text"></div>
 							<div className={accordionHidden[1] ? "hide" : "filter"}>
 								<div>
-								<input type="radio" id="ASC" 
+									<input
+										type="radio"
+										id="ASC"
 										onClick={(ev) => {
 											handleSort(ev);
 											// console.log(ev.target.classList.toggle("active"));
-										}} className="checkbox" name="drone" value="ASC" />
-								<label for="ASC"></label>
-								
-								
+										}}
+										className="checkbox"
+										name="drone"
+										value="ASC"
+									/>
+									<label htmlFor="ASC"></label>
 									{/* <button
 										id={"ASC"}
 										onClick={(ev) => {
@@ -322,12 +323,18 @@ function NftMarket(props) {
 									Sort by price (ASC)
 								</div>
 								<div>
-								<input type="radio" id="DESC" 
+									<input
+										type="radio"
+										id="DESC"
 										onClick={(ev) => {
 											handleSort(ev);
 											// console.log(ev.target.classList.toggle("active"));
-										}} className="checkbox" name="drone" value="DESC" />
-								<label for="DESC"></label>
+										}}
+										className="checkbox"
+										name="drone"
+										value="DESC"
+									/>
+									<label htmlFor="DESC"></label>
 									{/* <button
 										id={"DESC"}
 										onClick={(ev) => {
@@ -407,7 +414,7 @@ function NftMarket(props) {
 								</div>
 							</div> */}
 						</div>
-						<div class="modal-constructor modal-constructor-market">
+						<div className="modal-constructor modal-constructor-market">
 							<div className="grid">
 								{props.loader ? (
 									<div className="loader">
@@ -447,23 +454,24 @@ function NftMarket(props) {
 													}}
 													className="element"
 												>
-													{/* <div class="rarity">L</div> */}
-													<div class="img">
+													{/* <div className="rarity">L</div> */}
+													<div className="img">
 														<img src={item.icon} />
 													</div>
-													<div class="nameCol">
+													<div className="nameCol">
 														{item.nameCollection.substring(0, 40)}
 													</div>
-													<div class="name">{item.name.substring(0, 20)}</div>
-													<div class="subtitle">Price</div>
-													<div class="price">
+													<div className="name">
+														{item.name.substring(0, 20)}
+													</div>
+													<div className="subtitle">Price</div>
+													<div className="price">
 														<span></span> {item.price.toFixed(3)} NEAR
 													</div>
 												</div>
 											);
 										})
 								)}
-
 							</div>
 						</div>
 					</div>

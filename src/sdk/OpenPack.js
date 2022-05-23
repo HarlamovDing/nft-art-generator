@@ -16,9 +16,9 @@ function OpenPack() {
 			<div className={connectWal ? "App-error" : "App App2"}>
 				<Header activeCat={2}></Header>
 
-				<div class="pack">
-					<div class="title">Robots Collection</div>
-					<div class="info">
+				<div className="pack">
+					<div className="title">Robots Collection</div>
+					<div className="info">
 						<div>
 							Owner: <span>0:65eb...fe7b</span>
 						</div>
@@ -29,11 +29,11 @@ function OpenPack() {
 							Royalty for Author : <span>15%</span>
 						</div>
 					</div>
-					<div class="text">
+					<div className="text">
 						By purchasing and opening a pack of a collection, you get one of the
 						NFTs from the selected collection
 					</div>
-					<div class="button-1-square">Buy & Open Pack</div>
+					<div className="button-1-square">Buy & Open Pack</div>
 				</div>
 
 				<Footer></Footer>

@@ -357,8 +357,6 @@ function NftMarketNft() {
 				mediaUrl = info.media;
 			}
 
-			
-
 			let img = new Image();
 			img.src = mediaUrl;
 
@@ -378,7 +376,7 @@ function NftMarketNft() {
 								tempPrice / (1000000000000000000000000).toString(),
 							);
 
-							ContractCol.nft_remaining_count({}).then((creator)=>{
+							ContractCol.nft_remaining_count({}).then((creator) => {
 								console.log(creator);
 								setNftInfo({
 									name: info.title,
@@ -393,9 +391,7 @@ function NftMarketNft() {
 									size: res.size / 1024 / 1024,
 									nameCollection: metadata.name,
 								});
-							})
-
-							
+							});
 
 							console.log(
 								data.owner_id,
@@ -534,14 +530,20 @@ function NftMarketNft() {
 								.then((data_id) => {
 									console.log(data_id);
 									console.log(data_id.data.todoItem.args.deposit);
-									console.log(data_id.data.todoItem.args.args_json.balance + data_id.data.todoItem.args.deposit);
+									console.log(
+										data_id.data.todoItem.args.args_json.balance +
+											data_id.data.todoItem.args.deposit,
+									);
 
 									let deposit = 0;
 
-									if (data_id.data.todoItem.args.deposit > data_id.data.todoItem.args.args_json.balance || data_id.data.todoItem.args.args_json.balance == undefined || data_id.data.todoItem.args.args_json.balance == null) {
-
+									if (
+										data_id.data.todoItem.args.deposit >
+											data_id.data.todoItem.args.args_json.balance ||
+										data_id.data.todoItem.args.args_json.balance == undefined ||
+										data_id.data.todoItem.args.args_json.balance == null
+									) {
 										deposit = data_id.data.todoItem.args.deposit;
-
 									} else {
 										deposit = data_id.data.todoItem.args.args_json.balance;
 									}
@@ -556,19 +558,13 @@ function NftMarketNft() {
 										time: dateString,
 										// price: 0,
 										// price_fiat: 0,
-										price: (
-											deposit /
-											1000000000000000000000000
-										).toFixed(2),
+										price: (deposit / 1000000000000000000000000).toFixed(2),
 										price_fiat: (
-											(
-												deposit /
-												1000000000000000000000000
-											).toFixed(2) * price.near.usd
+											(deposit / 1000000000000000000000000).toFixed(2) *
+											price.near.usd
 										).toFixed(2),
 									});
 								});
-
 						}
 
 						console.log(tempHistory);
@@ -588,7 +584,6 @@ function NftMarketNft() {
 		// 	history.push("/nft-market");
 		// }
 	}, []);
-
 
 	function close() {
 		dispatch({type: "closeConnect"});
@@ -623,63 +618,60 @@ function NftMarketNft() {
 
 	return (
 		<Router>
-			<div
-				className={"App App2"}
-			>
+			<div className={"App App2"}>
 				<Header activeCat={2}></Header>
 
-				<div class="container auction-sale">
-					<div className="back" onClick={() => history.goBack()}>
-					</div>
-					<div class="img">
-						<div class="img">
+				<div className="container auction-sale">
+					<div className="back" onClick={() => history.goBack()}></div>
+					<div className="img">
+						<div className="img">
 							<img src={nftInfo.img} />
 						</div>
-						<div class="text">
+						<div className="text">
 							{nftInfo.width} x {nftInfo.height} px.IMAGE(
 							{nftInfo.size.toFixed(2)}MB)
 						</div>
-						<div class="text">
-							<div class="title">Contract Address</div>
+						<div className="text">
+							<div className="title">Contract Address</div>
 							{addrCol}
 						</div>
-						<div class="text">
-							<div class="title">Token ID</div>
+						<div className="text">
+							<div className="title">Token ID</div>
 							{token_id}
 						</div>
 					</div>
-					<div class="content">
+					<div className="content">
 						<div
-							class="title-col"
+							className="title-col"
 							onClick={() => history.push("/pack/" + addrCol)}
 						>
 							{nftInfo.nameCollection}
 						</div>
-						<div class="title-nft">
+						<div className="title-nft">
 							{nftInfo.name}
 							{/* <span className="share">
-								<div class="img"></div>
+								<div className="img"></div>
 								Share
 							</span> */}
 						</div>
-						<div class="users">
-							<div class="user">
-								<div class="img">H</div>
-								<div class="text">
+						<div className="users">
+							<div className="user">
+								<div className="img">H</div>
+								<div className="text">
 									<span>Creator</span>
 									{nftInfo.creator}
 								</div>
 							</div>
-							<div class="user">
-								<div class="img">M</div>
-								<div class="text">
+							<div className="user">
+								<div className="img">M</div>
+								<div className="text">
 									<span>Owner</span>
 									{nftInfo.owner}
 								</div>
 							</div>
 						</div>
-						<div class="desc">
-							<div class="title">Description</div>
+						<div className="desc">
+							<div className="title">Description</div>
 							{isFullDescription ? nftInfo.desc : nftInfo.desc.slice(0, 40)}
 							<br />
 							<div
@@ -696,12 +688,12 @@ function NftMarketNft() {
 									: "price"
 							}
 						>
-							<div class="title">Price</div>
-							<div class="price">
+							<div className="title">Price</div>
+							<div className="price">
 								<span></span>
 								{nftInfo.price.toFixed(3)} NEAR
 							</div>
-							<div class="buttons">
+							<div className="buttons">
 								<div
 									className={
 										nftInfo.owner == window.accountId || !isOnSale
@@ -724,7 +716,7 @@ function NftMarketNft() {
 									: "hide"
 							}
 						>
-							<div class="title">Price</div>
+							<div className="title">Price</div>
 							<div className="price-input">
 								<input
 									value={salePrice}
@@ -781,43 +773,43 @@ function NftMarketNft() {
 						>
 							Cancel Sale
 						</button>
-						{/* <div class="time">
-							<div class="title">Auction ends in</div>
-							<div class="timer">
-								<div class="timer-item">
-									<div class="num">02</div>
-									<div class="text">Days</div>
+						{/* <div className="time">
+							<div className="title">Auction ends in</div>
+							<div className="timer">
+								<div className="timer-item">
+									<div className="num">02</div>
+									<div className="text">Days</div>
 								</div>
-								<div class="timer-item">
-									<div class="num">02</div>
-									<div class="text">Hours</div>
+								<div className="timer-item">
+									<div className="num">02</div>
+									<div className="text">Hours</div>
 								</div>
-								<div class="timer-item">
-									<div class="num">02</div>
-									<div class="text">Minutes</div>
+								<div className="timer-item">
+									<div className="num">02</div>
+									<div className="text">Minutes</div>
 								</div>
-								<div class="timer-item">
-									<div class="num">02</div>
-									<div class="text">Seconds</div>
+								<div className="timer-item">
+									<div className="num">02</div>
+									<div className="text">Seconds</div>
 								</div>
 							</div>
 						</div> */}
 
-						<div class="history">
-							<div class="menu-history">
-								<div class="menu-item">Item Activity</div>
-								{/* <div class="menu-item">Provenance</div> */}
+						<div className="history">
+							<div className="menu-history">
+								<div className="menu-item">Item Activity</div>
+								{/* <div className="menu-item">Provenance</div> */}
 							</div>
-							<div class="content">
+							<div className="content">
 								{nftHistory.map((item) => {
 									return (
-										<div class="item">
-											<div class="name">
+										<div className="item">
+											<div className="name">
 												{item.owner} <span>{item.method_name}</span>
 											</div>
-											<div class="price">{item.price} NEAR</div>
-											<div class="date">{item.time}</div>
-											<div class="price-rub">≈ $ {item.price_fiat}</div>
+											<div className="price">{item.price} NEAR</div>
+											<div className="date">{item.time}</div>
+											<div className="price-rub">≈ $ {item.price_fiat}</div>
 										</div>
 									);
 								})}

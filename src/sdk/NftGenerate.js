@@ -68,7 +68,6 @@ function NftCustomization() {
 		}
 
 		console.log(localClass);
-
 	};
 
 	useEffect(() => {
@@ -215,7 +214,6 @@ function NftCustomization() {
 		});
 	}
 
-
 	// function save() {
 
 	// 	nftArr.push(curentImg);
@@ -304,21 +302,23 @@ function NftCustomization() {
 	function random() {
 		let temp = [];
 
-
 		for (let i = 0; i < classArr.length; i++) {
 			let length = classArr[i].imgs.length;
 			temp.push(Math.round(Math.random() * (length - 1 - 0) + 0));
 		}
 
-		console.log(curentImg, temp, JSON.stringify(curentImg) == JSON.stringify(temp));
+		console.log(
+			curentImg,
+			temp,
+			JSON.stringify(curentImg) == JSON.stringify(temp),
+		);
 
-		if(JSON.stringify(curentImg) == JSON.stringify(temp)) {
+		if (JSON.stringify(curentImg) == JSON.stringify(temp)) {
 			random();
 			return;
 		}
-		
+
 		console.log(2);
-		
 
 		setCurentImg(temp);
 	}
@@ -376,7 +376,6 @@ function NftCustomization() {
 			let temp = [];
 			console.log(classArr[i].rarity);
 			for (let j = 0; j < classArr[i].rarity.length; j++) {
-				
 				for (let k = 0; k < Number(classArr[i].rarity[j]) + 1; k++) {
 					temp.push(j);
 				}
@@ -505,18 +504,20 @@ function NftCustomization() {
 				{alert.message}
 			</div>
 
-			<div
-				className={"App App2"}
-			>
+			<div className={"App App2"}>
 				<Header activeCat={1}></Header>
 
 				<div className="constructors">
 					<div className="container-header">
-
 						<HeaderEditor classArr={classArr} activeStep={3} />
 
 						<div className="modal-constructor modal-constructor-layers ">
-							<div className="title">
+							<div
+								onClick={() => {
+									accordionChange(0);
+								}}
+								className="title"
+							>
 								Mint Price{" "}
 								<span
 									className={accordionHidden[0] ? "hidden" : ""}
@@ -542,9 +543,18 @@ function NftCustomization() {
 									Set Price
 								</span>
 							</div>
-							<div style={{margin: "40px 0px 10px 0px"}} className="title">
+							<div
+								style={{margin: "40px 0px 10px 0px"}}
+								onClick={() => {
+									accordionChange(1);
+								}}
+								className="title"
+							>
 								Resale Royalty{" "}
-								<div aria-label="Scroll the slider to set the author's percentage of sales" className="hint hint--top"></div>{" "}
+								<div
+									aria-label="Scroll the slider to set the author's percentage of sales"
+									className="hint hint--top"
+								></div>{" "}
 								<span
 									className={accordionHidden[1] ? "hidden" : ""}
 									onClick={() => {
@@ -648,7 +658,10 @@ function NftCustomization() {
 										: copySrc()}
 								</div>
 								<div className="break"></div>
-								<div className={allComb>1?"button-3-square":"hide"} onClick={random}>
+								<div
+									className={allComb > 1 ? "button-3-square" : "hide"}
+									onClick={random}
+								>
 									Preview
 								</div>
 								<div
@@ -685,7 +698,12 @@ function NftCustomization() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-elements">
-							<div className="title">
+							<div
+								onClick={() => {
+									accordionChange(2);
+								}}
+								className="title"
+							>
 								Elements{" "}
 								<span
 									className={accordionHidden[2] ? "hidden" : ""}
@@ -717,7 +735,6 @@ function NftCustomization() {
 									{allComb}
 								</div>
 							</div>
-
 						</div>
 					</div>
 				</div>

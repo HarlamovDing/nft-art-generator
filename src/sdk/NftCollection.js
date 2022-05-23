@@ -60,7 +60,7 @@ function NftCollection() {
 		avail: false,
 	});
 
-	const [collectionCount, setCollectionCount] = useState([0,0]);
+	const [collectionCount, setCollectionCount] = useState([0, 0]);
 
 	var openRequest = window.indexedDB.open("imgsStore", 10);
 	// localClass = JSON.parse(localStorage.getItem("class"))
@@ -217,16 +217,16 @@ function NftCollection() {
 			});
 			return;
 		} else {
+			let idBlobObj = {};
 
-			let idBlobObj = {}
-
-			let tempArr = []
+			let tempArr = [];
 
 			const openRequest = window.indexedDB.open("imgsStore", 10);
 
 			openRequest.onsuccess = async (event) => {
-
-				const store = event.target.result.transaction("imgs").objectStore("imgs");
+				const store = event.target.result
+					.transaction("imgs")
+					.objectStore("imgs");
 				store.getAll().onsuccess = (event) => {
 					console.log(event.target.result);
 					const store_data = event.target.result;
@@ -247,43 +247,34 @@ function NftCollection() {
 							console.log(e.currentTarget.result);
 							let tempId = tempFile.id;
 							idBlobObj[tempId] = e.currentTarget.result;
-						}
+						};
 					}
-				}
+				};
+			};
 
-				
-
-			}
-
-			
-
-			setTimeout(()=>{
+			setTimeout(() => {
 				console.log(idBlobObj);
-					const data = {
-						projectName: details.projectName,
-						collectionName: details.collectionName,
-						projectDescription: details.projectDescription,
-						width: localStorage.getItem("width"),
-						height: localStorage.getItem("height"),
-						classArr: arrClass,
-						indexedData: idBlobObj,
-					};
-		
-					e.preventDefault();
-					downloadFile({
-						data: JSON.stringify(data),
-						fileName: details.projectName + ".json",
-						fileType: "text/json",
-					});
+				const data = {
+					projectName: details.projectName,
+					collectionName: details.collectionName,
+					projectDescription: details.projectDescription,
+					width: localStorage.getItem("width"),
+					height: localStorage.getItem("height"),
+					classArr: arrClass,
+					indexedData: idBlobObj,
+				};
 
+				e.preventDefault();
+				downloadFile({
+					data: JSON.stringify(data),
+					fileName: details.projectName + ".json",
+					fileType: "text/json",
+				});
 			}, 1000);
-
-			
 		}
 	};
 
-	useEffect(async ()=>{
-
+	useEffect(async () => {
 		await fetch("https://helper.testnet.near.org/fiat", {
 			method: "GET",
 			headers: {
@@ -291,15 +282,14 @@ function NftCollection() {
 				Connection: "keep-alive",
 			},
 		})
-		.then((data) => {
-			return data.json();
-		})
-		.then(async (price) => {
-			console.log(price.near.usd);
-			setNearPrice(price.near.usd);
-		});
-
-	})
+			.then((data) => {
+				return data.json();
+			})
+			.then(async (price) => {
+				console.log(price.near.usd);
+				setNearPrice(price.near.usd);
+			});
+	});
 
 	useEffect(async () => {
 		console.log("UseEffect minted");
@@ -314,7 +304,6 @@ function NftCollection() {
 			if (addr == null || addr == undefined) {
 				return;
 			}
-	
 
 			window.tempContract = await new nearAPI.Contract(
 				window.walletConnection.account(),
@@ -325,17 +314,20 @@ function NftCollection() {
 						"nft_supply_for_owner",
 						"nft_tokens_for_owner",
 						"nft_token",
-						"nft_remaining_count"
+						"nft_remaining_count",
 					],
 					// changeMethods: ["new"],
 					sender: window.walletConnection.getAccountId(),
 				},
 			);
 
-			tempContract.nft_remaining_count({}).then((data)=>{
+			tempContract.nft_remaining_count({}).then((data) => {
 				console.log(data);
-				setCollectionCount([data.total_mintable_tokens_count, data.token_matrix]);
-			})
+				setCollectionCount([
+					data.total_mintable_tokens_count,
+					data.token_matrix,
+				]);
+			});
 
 			tempContract
 				.nft_tokens_for_owner({
@@ -363,7 +355,7 @@ function NftCollection() {
 		isSaleAvailiable();
 	}, [collectionMinted]);
 
-	useEffect(()=>{
+	useEffect(() => {
 		console.log("UseEffect is sale Avil");
 		isSaleAvailiable();
 	}, []);
@@ -383,7 +375,9 @@ function NftCollection() {
 			}
 
 			fetch(
-				"https://helper.testnet.near.org/account/" + window.walletConnection.getAccountId() + "/likelyNFTs",
+				"https://helper.testnet.near.org/account/" +
+					window.walletConnection.getAccountId() +
+					"/likelyNFTs",
 				{
 					method: "get",
 					headers: {
@@ -391,47 +385,48 @@ function NftCollection() {
 						Connection: "keep-alive",
 					},
 				},
-			).then((data) => {
-				return data.json();
-			}).then(async (data) => {
-				console.log(data);
+			)
+				.then((data) => {
+					return data.json();
+				})
+				.then(async (data) => {
+					console.log(data);
 
-				for(let i = 0; i < data.length; i++) {
-					if(data[i] == addr) {
-						console.log(i);
+					for (let i = 0; i < data.length; i++) {
+						if (data[i] == addr) {
+							console.log(i);
 
-						window.tempContract = await new nearAPI.Contract(
-							window.walletConnection.account(),
-							addr,
-							{
-								viewMethods: [
-									"nft_tokens",
-									"nft_supply_for_owner",
-									"nft_tokens_for_owner",
-								],
-								// changeMethods: ["new"],
-								sender: window.walletConnection.getAccountId(),
-							},
-						);
+							window.tempContract = await new nearAPI.Contract(
+								window.walletConnection.account(),
+								addr,
+								{
+									viewMethods: [
+										"nft_tokens",
+										"nft_supply_for_owner",
+										"nft_tokens_for_owner",
+									],
+									// changeMethods: ["new"],
+									sender: window.walletConnection.getAccountId(),
+								},
+							);
 
-						try {
-							await tempContract
-								.nft_tokens_for_owner({
-									account_id: window.walletConnection.getAccountId(),
-									from_index: "0",
-									limit: 100,
-								})
-								.then(async (data) => {
-									// console.log(data, data.length, "Сколько всего во владении");
-									setCollectionNotOnSale(data.length);
-								});
-						} catch {
-							console.log("error");
+							try {
+								await tempContract
+									.nft_tokens_for_owner({
+										account_id: window.walletConnection.getAccountId(),
+										from_index: "0",
+										limit: 100,
+									})
+									.then(async (data) => {
+										// console.log(data, data.length, "Сколько всего во владении");
+										setCollectionNotOnSale(data.length);
+									});
+							} catch {
+								console.log("error");
+							}
 						}
-
 					}
-				}
-			});
+				});
 
 			let tempCol = [];
 
@@ -445,53 +440,53 @@ function NftCollection() {
 			);
 
 			contractMarket
-			.get_sales_by_owner_id({
-				account_id: window.walletConnection.getAccountId(),
-				from_index: "0",
-				limit: 200,
-			}).then(async (data) => {
-				console.log(data);
-				for(let i = 0; i < data.length; i++) {
-					if(data[i].nft_contract_id == addr) {
+				.get_sales_by_owner_id({
+					account_id: window.walletConnection.getAccountId(),
+					from_index: "0",
+					limit: 200,
+				})
+				.then(async (data) => {
+					console.log(data);
+					for (let i = 0; i < data.length; i++) {
+						if (data[i].nft_contract_id == addr) {
+							window.ContractCollection = await new nearAPI.Contract(
+								window.walletConnection.account(),
+								data[i].nft_contract_id,
+								{
+									viewMethods: [
+										"nft_tokens",
+										"nft_supply_for_owner",
+										"nft_tokens_for_owner",
+										"nft_token",
+									],
+									// changeMethods: ["new"],
+									sender: window.walletConnection.getAccountId(),
+								},
+							);
 
-						window.ContractCollection = await new nearAPI.Contract(
-							window.walletConnection.account(),
-							data[i].nft_contract_id,
-							{
-								viewMethods: [
-									"nft_tokens",
-									"nft_supply_for_owner",
-									"nft_tokens_for_owner",
-									"nft_token",
-								],
-								// changeMethods: ["new"],
-								sender: window.walletConnection.getAccountId(),
-							},
-						);
-
-						ContractCollection.nft_token({token_id: data[i].token_id}).then((data_token)=>{
-
-							tempCol.push({
-								img: "https://cloudflare-ipfs.com/ipfs/" + data_token.metadata.media,
-								name: data_token.metadata.title,
-								desc: data_token.metadata.description,
-								token_id: data_token.token_id,
-							});
-						})
+							ContractCollection.nft_token({token_id: data[i].token_id}).then(
+								(data_token) => {
+									tempCol.push({
+										img:
+											"https://cloudflare-ipfs.com/ipfs/" +
+											data_token.metadata.media,
+										name: data_token.metadata.title,
+										desc: data_token.metadata.description,
+										token_id: data_token.token_id,
+									});
+								},
+							);
+						}
 					}
-				}
 
-				console.log(tempCol);
-			});
+					console.log(tempCol);
+				});
 
 			setCollectionOnSale(tempCol);
-			
 		}
-
 	}, [collectionOnSale]);
 
 	async function isSaleAvailiable() {
-
 		window.contractMarket = await new nearAPI.Contract(
 			window.walletConnection.account(),
 			marketNft,
@@ -513,15 +508,25 @@ function NftCollection() {
 						account_id: window.walletConnection.getAccountId(),
 					})
 					.then((data) => {
-						if (sales.length+collectionNotOnSale <= data / 10000000000000000000000) {
-							console.log(sales.length, sales.length+collectionNotOnSale, data / 10000000000000000000000);
+						if (
+							sales.length + collectionNotOnSale <=
+							data / 10000000000000000000000
+						) {
+							console.log(
+								sales.length,
+								sales.length + collectionNotOnSale,
+								data / 10000000000000000000000,
+							);
 							setDepositSale({
 								deposit: data / 10000000000000000000000,
 								sale: sales.length,
 								avail: true,
 							});
 						} else {
-							console.log(sales.length + collectionNotOnSale, data / 10000000000000000000000);
+							console.log(
+								sales.length + collectionNotOnSale,
+								data / 10000000000000000000000,
+							);
 							setDepositSale({
 								deposit: data / 10000000000000000000000,
 								sale: sales.length,
@@ -555,9 +560,7 @@ function NftCollection() {
 
 		try {
 			hashTrans = hashTrans.split("&errorCode=")[0];
-		} catch {
-
-		}
+		} catch {}
 		if (hashTrans != undefined) {
 			console.log(hashTrans, "HASHTRANS");
 			async function hashLog() {
@@ -583,7 +586,6 @@ function NftCollection() {
 					} catch {
 						event = result.transaction.actions[0].FunctionCall.method_name;
 					}
-
 
 					if (event == "deploy_contract_code") {
 						setActiveButtons([false, true, false]);
@@ -763,7 +765,6 @@ function NftCollection() {
 	}
 
 	async function depositAll() {
-
 		if (collectionMinted.length < 1) {
 			return;
 		}
@@ -805,7 +806,6 @@ function NftCollection() {
 	}
 
 	async function saleAllNft() {
-
 		if (
 			salePrice <= 0 ||
 			salePrice == "" ||
@@ -855,7 +855,6 @@ function NftCollection() {
 
 		let notOnSale = [];
 
-
 		window.tempContract = await new nearAPI.Contract(
 			window.walletConnection.account(),
 			localStorage.getItem("addrCol"),
@@ -880,10 +879,10 @@ function NftCollection() {
 				.then(async (data) => {
 					console.log(data, data.length, "Сколько всего");
 
-					for(let i = 0; i < data.length; i++) {
+					for (let i = 0; i < data.length; i++) {
 						let found = false;
-						for(let j = 0; j < collectionOnSale.length; j++) {
-							if(data[i].token_id == collectionOnSale[j].token_id) {
+						for (let j = 0; j < collectionOnSale.length; j++) {
+							if (data[i].token_id == collectionOnSale[j].token_id) {
 								found = true;
 								break;
 								// notOnSale.push(data[i].token_id);
@@ -898,13 +897,11 @@ function NftCollection() {
 
 					let amountSale;
 
-					if(notOnSale.length > 10) {
+					if (notOnSale.length > 10) {
 						amountSale = 10;
-
 					} else {
 						amountSale = notOnSale.length;
 					}
-
 
 					for (let i = 0; i < amountSale; i++) {
 						let tempGas = "300000000000000" / amountSale;
@@ -923,7 +920,7 @@ function NftCollection() {
 							),
 						);
 					}
-			
+
 					const transaction = nearAPI.transactions.createTransaction(
 						walletConnection.getAccountId(),
 						nearAPI.utils.key_pair.PublicKey.fromString(pubKey),
@@ -932,15 +929,15 @@ function NftCollection() {
 						actionsTrans,
 						recentBlockHash,
 					);
-			
+
 					console.log(actionsTrans);
-			
+
 					// return;
-			
+
 					if (actionsTrans.length == 0) {
 						return;
 					}
-			
+
 					try {
 						const result = await walletConnection.requestSignTransactions([
 							transaction,
@@ -948,14 +945,10 @@ function NftCollection() {
 					} catch {
 						walletAccount.requestSignIn("", "Title");
 					}
-
-					
-					
 				});
-		} catch(err) {
+		} catch (err) {
 			console.log(err);
 		}
-		
 	}
 
 	async function multTrans() {
@@ -1003,7 +996,6 @@ function NftCollection() {
 							base_uri: null,
 							reference: null,
 							reference_hash: null,
-							
 						},
 					},
 					"30000000000000",
@@ -1047,7 +1039,6 @@ function NftCollection() {
 				walletAccount.requestSignIn("", "Title");
 			}
 		});
-
 	}
 
 	async function deployColectionNear() {
@@ -1074,7 +1065,6 @@ function NftCollection() {
 			.catch((err) => {
 				walletAccount.requestSignIn("", "Title");
 			});
-
 	}
 
 	async function mint_nft(amount) {
@@ -1198,16 +1188,12 @@ function NftCollection() {
 
 	return (
 		<Router>
-			
-			<div
-				className={"App App2"}
-			>
+			<div className={"App App2"}>
 				<Header activeCat={1}></Header>
 
-				<div class="construtors constructors-col">
-					<div class="container-header">
-
-						<div class="modal-constructor modal-constructor-back">
+				<div className="construtors constructors-col">
+					<div className="container-header">
+						<div className="modal-constructor modal-constructor-back">
 							<button
 								onClick={() => {
 									if (curentCollectionStep > 1) {
@@ -1222,14 +1208,17 @@ function NftCollection() {
 								}}
 							></button>
 						</div>
-						<div class="modal-constructor modal-constructor-param">
-						<div class="title-1">NFT Publisher</div>
+						<div className="modal-constructor modal-constructor-param">
+							<div className="title-1">NFT Publisher</div>
 							{curentCollectionStep == 1 ? (
 								<>
-									<div class="title">Publish collection into blockchain</div>
-									<div class="desc">
-									This will publish your collection and make it available for NFT Minting.
-									Once done, your published collection will be available for you or other users to Mint.
+									<div className="title">
+										Publish collection into blockchain
+									</div>
+									<div className="desc">
+										This will publish your collection and make it available for
+										NFT Minting. Once done, your published collection will be
+										available for you or other users to Mint.
 									</div>
 
 									<button
@@ -1238,14 +1227,17 @@ function NftCollection() {
 												? "button-1-square"
 												: "button-1-square button-1-square-disabled"
 										}
-										style={{margin: "0px 0px 00px 0px"}}
+										style={{margin: "0px 0px 10px 0px"}}
 										onClick={activeButtons[0] ? deployColectionNear : null}
 									>
 										I. Initialize Collection
 									</button>
 
-									<div style={{margin: "0px 0px 10px 0px"}} className="desc">
-										Smart-contract one-time fee ~8 NEAR ({8*nearPrice} USD)
+									<div
+										style={{margin: "0px 0px 15px 0px", textAlign: "center"}}
+										className="desc"
+									>
+										Smart-contract one-time fee ~8 NEAR ({8 * nearPrice} USD)
 									</div>
 
 									<button
@@ -1269,17 +1261,16 @@ function NftCollection() {
 											</span>
 										)}
 									</button>
-									
 								</>
 							) : null}
 							{curentCollectionStep == 2 ? (
 								<>
-									<div class="title">Mint your NFTs</div>
-									<div class="desc">
+									<div className="title">Mint your NFTs</div>
+									<div className="desc">
 										Set the number of NFTs you want to Mint
 									</div>
 
-									<div class="mint">
+									<div className="mint">
 										<input
 											type="number"
 											onChange={(ev) => {
@@ -1299,9 +1290,7 @@ function NftCollection() {
 										<button
 											className="max"
 											onClick={() => {
-												setAmountMintNft(
-													collectionCount[1],
-												);
+												setAmountMintNft(collectionCount[1]);
 											}}
 										>
 											Max
@@ -1309,29 +1298,49 @@ function NftCollection() {
 									</div>
 
 									<button
-										className={amountMintNft > collectionCount[1] || collectionCount[0] == 0 || collectionCount[1] == 0?"button-3-square button-1-square-disabled" : "button-3-square"}
+										className={
+											amountMintNft > collectionCount[1] ||
+											collectionCount[0] == 0 ||
+											collectionCount[1] == 0
+												? "button-3-square button-1-square-disabled"
+												: "button-3-square"
+										}
 										onClick={() => {
 											mint_nft(amountMintNft);
 										}}
 									>
 										Mint{" "}
-										<span style={{"margin": "0px 8px","display": "flex","alignItems": "center", "justifyContent": "center"}}>
+										<span
+											style={{
+												margin: "0px 8px",
+												display: "flex",
+												alignItems: "center",
+												justifyContent: "center",
+											}}
+										>
 											(
 											{(amountMintNft * 0.1 + amountMintNft * price).toFixed(1)}{" "}
-											<span className="near-sign" style={{"margin": "0px 8px", "width": "20px", "height": "20px"}}></span>
-
+											<span
+												className="near-sign"
+												style={{
+													margin: "0px 8px",
+													width: "20px",
+													height: "20px",
+												}}
+											></span>
 											NEAR)
 										</span>{" "}
 									</button>
-									<div style={{textAlign: "center"}} class="desc">
+									<div style={{textAlign: "center"}} className="desc">
 										Estimated fee ~ 0.1 NEAR for each
 									</div>
 
 									<div
 										style={{opacity: "1", margin: "0px 0px 20px 0px"}}
-										class="desc"
+										className="desc"
 									>
-										If you choose not to Mint NFTs now, then you can always do it later from Marketplace &#8594; Collection page.
+										If you choose not to Mint NFTs now, then you can always do
+										it later from Marketplace &#8594; Collection page.
 									</div>
 
 									<button
@@ -1348,16 +1357,21 @@ function NftCollection() {
 							) : null}
 							{curentCollectionStep == 3 ? (
 								<>
-									<div class="title">Sell NFTs on the Marketplace</div>
-									<div class="desc">
+									<div className="title">Sell NFTs on the Marketplace</div>
+									<div className="desc">
 										Put your new NFTs up for sale on the Marketplace
 									</div>
 
 									<div
-										className={collectionNotOnSale - collectionOnSale.length > 0 && depositSale.avail? "price-sale price" : "hide"}
-										style={{"margin-bottom":"20px"}}
+										className={
+											collectionNotOnSale - collectionOnSale.length > 0 &&
+											depositSale.avail
+												? "price-sale price"
+												: "hide"
+										}
+										style={{"margin-bottom": "20px"}}
 									>
-										<div class="title">Price</div>
+										<div className="title">Price</div>
 										<div className="price-input">
 											<input
 												value={salePrice}
@@ -1365,24 +1379,38 @@ function NftCollection() {
 													changeError("salePrice", ev.target.value);
 												}}
 												type="number"
-												className={errorInput == "salePrice" ? "inputErr" : "price"}
+												className={
+													errorInput == "salePrice" ? "inputErr" : "price"
+												}
 											/>
 											<span>NEAR</span>
 										</div>
-										<span className={errorInput == "salePrice" ? "errMsg" : "hide"}>
+										<span
+											className={errorInput == "salePrice" ? "errMsg" : "hide"}
+										>
 											Set Price
 										</span>
 									</div>
 
 									<button
 										onClick={saleAllNft}
-										className={collectionNotOnSale - collectionOnSale.length > 0 && depositSale.avail ? "button-3-square" : "hide"}
+										className={
+											collectionNotOnSale - collectionOnSale.length > 0 &&
+											depositSale.avail
+												? "button-3-square"
+												: "hide"
+										}
 									>
 										Sale <span> NFT’s</span>{" "}
 									</button>
 									<div
 										style={{textAlign: "center"}}
-										className={collectionNotOnSale - collectionOnSale.length > 0 && depositSale.avail ? "desc" : "hide"}
+										className={
+											collectionNotOnSale - collectionOnSale.length > 0 &&
+											depositSale.avail
+												? "desc"
+												: "hide"
+										}
 									>
 										Estimated fee ~ 0.1 NEAR
 									</div>
@@ -1402,9 +1430,10 @@ function NftCollection() {
 
 									<div
 										style={{opacity: "1", margin: "0px 0px 10px 0px"}}
-										class="desc"
+										className="desc"
 									>
-										If you choose not to sell your NFTs now, don’t worry! All of your items are now available under Profile page.
+										If you choose not to sell your NFTs now, don’t worry! All of
+										your items are now available under Profile page.
 									</div>
 
 									<button
@@ -1419,8 +1448,8 @@ function NftCollection() {
 								</>
 							) : null}
 						</div>
-						<div class="modal-constructor modal-constructor-collection">
-							<div class="steps steps-univ">
+						<div className="modal-constructor modal-constructor-collection">
+							<div className="steps steps-univ">
 								<div
 									className={
 										curentCollectionStep == 1
@@ -1432,13 +1461,13 @@ function NftCollection() {
 										setCurentCollectionStep(1);
 									}}
 								>
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 1</div>
-										<div class="desc">Publish collection</div>
+									<div className="img"></div>
+									<div className="text">
+										<div className="name">Step 1</div>
+										<div className="desc">Publish collection</div>
 									</div>
 								</div>
-								<div class="line"></div>
+								<div className="line"></div>
 								<div
 									className={
 										curentCollectionStep == 2
@@ -1450,13 +1479,13 @@ function NftCollection() {
 										setCurentCollectionStep(2);
 									}}
 								>
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 2</div>
-										<div class="desc">Mint your NFTs</div>
+									<div className="img"></div>
+									<div className="text">
+										<div className="name">Step 2</div>
+										<div className="desc">Mint your NFTs</div>
 									</div>
 								</div>
-								<div class="line"></div>
+								<div className="line"></div>
 								<div
 									className={
 										curentCollectionStep == 3
@@ -1469,87 +1498,99 @@ function NftCollection() {
 										setCurentCollectionStep(3);
 									}}
 								>
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 3</div>
-										<div class="desc">Sell NFTs on the Marketplace</div>
+									<div className="img"></div>
+									<div className="text">
+										<div className="name">Step 3</div>
+										<div className="desc">Sell NFTs on the Marketplace</div>
 									</div>
 								</div>
 							</div>
 
-							<div class="collection-info">
-								<div class="info-1">
-									<div class="title">Collection Name</div>
-									<div class="text">{details.projectName}</div>
-									<div class="title">Description</div>
-									<div class="text">{details.projectDescription}</div>
+							<div className="collection-info">
+								<div className="info-1">
+									<div>
+										<div className="title">Collection Name</div>
+										<div className="text">{details.projectName}</div>
+									</div>
+									<div>
+										<div className="title">Description</div>
+										<div className="text">{details.projectDescription}</div>
+									</div>
 								</div>
-								<div class="info-2">
-									<div class="owner">
-										<div class="avatar">H</div>
-										<div class="text">
+								<div className="info-2">
+									<div className="owner">
+										<div className="avatar">H</div>
+										<div className="text">
 											<span>Owner</span>
 											{owner}
 										</div>
 									</div>
-									<div class="price">
-										<div class="subtitle">Mint Price</div>
-										<div class="near">
-											<span></span> <div class="price">{price} NEAR</div>
+									<div className="price">
+										<div className="subtitle">Mint Price</div>
+										<div className="near">
+											<span></span> <div className="price">{price} NEAR</div>
 										</div>
 									</div>
 								</div>
 							</div>
 
-							<div class="button-4-square" onClick={exportToJson}>
+							<div className="button-4-square" onClick={exportToJson}>
 								<span></span>Save project
 							</div>
 
-							<div className={curentCollectionStep == 1 ? "progress": "hide"}>
-								<div class="title">Collection generation process</div>
-								<div class="bar">
-									<span style={{"width": "100%"}}/>	
+							<div className={curentCollectionStep == 1 ? "progress" : "hide"}>
+								<div className="title">Collection generation process</div>
+								<div className="bar">
+									<span style={{width: "100%"}} />
 								</div>
 								<span>
 									{JSON.parse(localStorage.getItem("uniqFor")).length}/
 									{JSON.parse(localStorage.getItem("uniqFor")).length}
 								</span>
 							</div>
-							<div className={curentCollectionStep == 2 ? "progress": "hide"}>
-								<div class="title">Collection minted</div>
-								<div class="bar">
-									<span style={{"width": (collectionCount[0]-collectionCount[1])/(collectionCount[0]/100)+"%"}}></span>
+							<div className={curentCollectionStep == 2 ? "progress" : "hide"}>
+								<div className="title">Collection minted</div>
+								<div className="bar">
+									<span
+										style={{
+											width:
+												(collectionCount[0] - collectionCount[1]) /
+													(collectionCount[0] / 100) +
+												"%",
+										}}
+									></span>
 								</div>
 								<span>
-									{collectionCount[0]-collectionCount[1]}/
-									{collectionCount[0]}
+									{collectionCount[0] - collectionCount[1]}/{collectionCount[0]}
 								</span>
 							</div>
-							<div className={curentCollectionStep == 3 ? "progress": "hide"}>
-								<div class="title">Collection on sale</div>
-								<div class="bar">
-									<span style={{"width": (collectionOnSale.length)/(collectionNotOnSale/100)+"%"}}></span>
+							<div className={curentCollectionStep == 3 ? "progress" : "hide"}>
+								<div className="title">Collection on sale</div>
+								<div className="bar">
+									<span
+										style={{
+											width:
+												collectionOnSale.length / (collectionNotOnSale / 100) +
+												"%",
+										}}
+									></span>
 								</div>
 								<span>
-									{collectionOnSale.length}/
-									{collectionNotOnSale}
+									{collectionOnSale.length}/{collectionNotOnSale}
 								</span>
 							</div>
-							
+
 							<div
 								className={curentCollectionStep == 1 ? "collection" : "hide"}
 							>
 								{collection.map((item, index) => {
 									return (
-										<div
-											key={"uniqueId" + index}
-											className="element"
-										>
-											<div class="img">
+										<div key={"uniqueId" + index} className="element">
+											<div className="img">
 												<img src={item} />
 											</div>
-											<div class="nameCol">{details.projectName}</div>
-											<div class="name">
+											<div className="nameCol">{details.projectName}</div>
+											<div className="name">
 												{details.projectName}&nbsp; #{index + 1}
 											</div>
 										</div>
@@ -1557,42 +1598,37 @@ function NftCollection() {
 								})}
 							</div>
 
-							<div className={curentCollectionStep == 2 ? "collection" : "hide"}>
+							<div
+								className={curentCollectionStep == 2 ? "collection" : "hide"}
+							>
 								{collectionMinted.map((item, index) => {
 									return (
-										<div
-											key={"uniqueId" + index}
-											className="element"
-										>
-											<div class="img">
+										<div key={"uniqueId" + index} className="element">
+											<div className="img">
 												<img src={item.img} />
 											</div>
-											<div class="nameCol">{item.desc}</div>
-											<div class="name">{item.name}</div>
+											<div className="nameCol">{item.desc}</div>
+											<div className="name">{item.name}</div>
 										</div>
 									);
 								})}
 							</div>
 
-							<div className={curentCollectionStep == 3 ? "collection" : "hide"}>
+							<div
+								className={curentCollectionStep == 3 ? "collection" : "hide"}
+							>
 								{collectionOnSale.map((item, index) => {
 									return (
-										<div
-											key={"uniqueId" + index}
-											className="element"
-										>
-											<div class="img">
+										<div key={"uniqueId" + index} className="element">
+											<div className="img">
 												<img src={item.img} />
 											</div>
-											<div class="nameCol">{item.desc}</div>
-											<div class="name">{item.name}</div>
+											<div className="nameCol">{item.desc}</div>
+											<div className="name">{item.name}</div>
 										</div>
 									);
 								})}
 							</div>
-
-
-
 						</div>
 					</div>
 				</div>

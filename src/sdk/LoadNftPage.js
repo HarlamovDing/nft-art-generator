@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from "react";
-import {HashRouter as Router,useHistory} from "react-router-dom";
+import {HashRouter as Router, useHistory} from "react-router-dom";
 // import Context from "./Context";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -81,11 +81,10 @@ function LoadNftPage() {
 		console.log(db);
 		db.createObjectStore("imgs", {keyPath: "id", autoIncrement: true});
 
-		db.onversionchange = function (event) { 
+		db.onversionchange = function (event) {
 			console.log(event);
-			event.target.close(); 
-
-		}
+			event.target.close();
+		};
 	};
 
 	let nftArea = useRef();
@@ -94,8 +93,8 @@ function LoadNftPage() {
 	const dispatch = useDispatch();
 
 	const openError = (text) => {
-        dispatch({type: "openError", payload: text});
-    }
+		dispatch({type: "openError", payload: text});
+	};
 
 	const [newLayer, setNewLayer] = useState();
 
@@ -105,7 +104,7 @@ function LoadNftPage() {
 
 	const [videoPlay, setVideoPlay] = useState(false);
 
-	const [accordionHidden, setAccordioHidden] = useState([false, false]);
+	const [accordionHidden, setAccordioHidden] = useState([false, false, false]);
 
 	const [activeNext, setActiveNext] = useState(false);
 
@@ -155,9 +154,7 @@ function LoadNftPage() {
 							new Promise((resolve, reject) => {
 								console.log(i, j);
 								store.get(localClass[i].imgs[j]).onsuccess = (event) => {
-									console.log(URL.createObjectURL(
-										event.target.result.value,
-									));
+									console.log(URL.createObjectURL(event.target.result.value));
 									localClass[i].url[j] = URL.createObjectURL(
 										event.target.result.value,
 									);
@@ -175,7 +172,6 @@ function LoadNftPage() {
 	}
 
 	useEffect(() => {
-		
 		if (
 			localStorage.getItem("class") !== undefined &&
 			localStorage.getItem("class") !== null
@@ -204,7 +200,6 @@ function LoadNftPage() {
 
 			localWidth = localStorage.getItem("width");
 			localHeight = localStorage.getItem("height");
-
 		} else {
 			setClassArr1([
 				new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
@@ -222,7 +217,6 @@ function LoadNftPage() {
 			setCollectionName("No Name");
 			setProjectName("No Name");
 			setProjectDescription("No Description");
-
 		}
 	}, []);
 
@@ -260,9 +254,7 @@ function LoadNftPage() {
 
 			setWidth(localStorage.getItem("width"));
 			setHeight(localStorage.getItem("height"));
-
 		} else {
-			
 		}
 	}, []);
 
@@ -306,19 +298,7 @@ function LoadNftPage() {
 
 	// switching active picture
 	function setImgActive(index) {
-		let curImg = [];
-
-		for (let i = 0; i < curentImages.length; i++) {
-			let temp = curentImages[i];
-			if (i == curentLayer) {
-				temp = index;
-				curImg.push(index);
-			} else {
-				curImg.push(temp);
-			}
-		}
-
-		setCurentImages(curImg);
+		setCurentImages({...curentImages, [curentLayer]: index});
 	}
 
 	function deleteLayer(item) {
@@ -354,14 +334,16 @@ function LoadNftPage() {
 
 			console.log(openRequest);
 
-			openRequest.onerror = event => {
+			openRequest.onerror = (event) => {
 				console.log(event);
 				// return;
 			};
 
 			openRequest.onsuccess = async (event) => {
 				console.log(event);
-				const store = event.target.result.transaction("imgs", "readwrite").objectStore("imgs");
+				const store = event.target.result
+					.transaction("imgs", "readwrite")
+					.objectStore("imgs");
 				console.log(store);
 				// const testres = store.add(file);
 
@@ -383,10 +365,9 @@ function LoadNftPage() {
 
 				console.log(resRequest);
 
-
-				try{
+				try {
 					lastId = id;
-				}catch {
+				} catch {
 					lastId = 0;
 				}
 				console.log(lastId);
@@ -400,19 +381,15 @@ function LoadNftPage() {
 					image.src = e.target.result;
 					image.onload = async function () {
 						let name = file.name.substring(0, file.name.indexOf("."));
-						
 
 						let newWidth = this.width;
 						let newHeight = this.height;
 
 						let tempArr = [];
 						for (let i = 0; i < classArr1.length; i++) {
-
 							let temp = classArr1[i];
 							if (classArr1[curentLayer].name == classArr1[i].name) {
 								if (temp.imgs[0] == undefined) {
-									
-
 									temp.imgs = [];
 									temp.imgs.push(lastId);
 									temp.url = [tempBlob];
@@ -445,17 +422,13 @@ function LoadNftPage() {
 										width: tempSizesWidth,
 										height: tempSizesHeight,
 									};
-
 								}
 							}
 							tempArr.push(temp);
 						}
 
 						let maxW = Math.max.apply(null, tempArr[curentLayer].sizes.width);
-						let maxH = Math.max.apply(
-							null,
-							tempArr[curentLayer].sizes.height,
-						);
+						let maxH = Math.max.apply(null, tempArr[curentLayer].sizes.height);
 
 						if (width < maxW) {
 							setWidth(maxW);
@@ -469,9 +442,7 @@ function LoadNftPage() {
 						setClassArr1(tempArr);
 					};
 				};
-				
 			};
-
 		}
 	}
 
@@ -490,7 +461,6 @@ function LoadNftPage() {
 			store.delete(idDel);
 		};
 
-
 		for (let i = 0; i < classArr1.length; i++) {
 			let temp = classArr1[i];
 
@@ -502,9 +472,7 @@ function LoadNftPage() {
 			let tempArrImgSizeH = [];
 			if (classArr1[curentLayer].name == classArr1[i].name) {
 				for (let j = 0; j < classArr1[i].imgs.length; j++) {
-					
 					if (classArr1[i].imgs[j] != classArr1[i].imgs[index]) {
-
 						tempArrImg.push(classArr1[curentLayer].imgs[j]);
 						tempArrUrl.push(classArr1[curentLayer].url[j]);
 						tempArrNames.push(classArr1[curentLayer].names[j]);
@@ -582,13 +550,13 @@ function LoadNftPage() {
 
 		if (width <= 0 || width == undefined || width != parseInt(width, 10)) {
 			setErrorInput("width");
-			
+
 			return false;
 		}
 
 		if (height <= 0 || height == undefined || height != parseInt(height, 10)) {
 			setErrorInput("height");
-			
+
 			return false;
 		}
 
@@ -682,9 +650,11 @@ function LoadNftPage() {
 		setAccordioHidden(tempValue);
 	}
 
+	console.log("curentLayer", curentLayer);
+	console.log("curentImages", curentImages);
+
 	return (
 		<Router>
-			
 			<div className={videoPlay ? "video-player" : "hide"}>
 				<button className="close" onClick={() => setVideoPlay(false)}>
 					<span></span>
@@ -701,27 +671,27 @@ function LoadNftPage() {
 					></iframe>
 				</div>
 			</div>
-			<div
-				className={"App App2"}
-			>
-				<ErrorModal/>
+			<div className={"App App2"}>
+				<ErrorModal />
 
 				<Header activeCat={1}></Header>
 
 				<div className="constructors">
 					<div className="container-header">
-
-						<HeaderEditor classArr={classArr1} projectData={{
-							width,
-							height,
-							curentLayer,
-							projectDescription,
-							projectName,
-							collectionName
-						}} activeStep={1} />
+						<HeaderEditor
+							classArr={classArr1}
+							projectData={{
+								width,
+								height,
+								curentLayer,
+								projectDescription,
+								projectName,
+								collectionName,
+							}}
+							activeStep={1}
+						/>
 
 						<div className="modal-constructor modal-constructor-layers">
-
 							<div className="title">Layers</div>
 							<div className="text">Add/Edit layers</div>
 							{classArr1.length > 0 &&
@@ -789,8 +759,6 @@ function LoadNftPage() {
 							</div>
 						</div>
 						<div className="modal-constructor modal-constructor-upload">
-							
-
 							<div class="video-start">
 								Need Help? &nbsp;{" "}
 								<span onClick={() => setVideoPlay(true)}>
@@ -816,7 +784,8 @@ function LoadNftPage() {
 								<div className="imgs-list">
 									{classArr1.length > 0 &&
 										classArr1[curentLayer].imgs.map((item, index) => {
-											console.log(classArr1, curentLayer);
+											console.log("Current Layer", classArr1, curentLayer);
+											console.log("Current Images", curentImages);
 											return (
 												<div
 													key={"uniqueId" + index}
@@ -856,9 +825,8 @@ function LoadNftPage() {
 										You can select multiple images at once
 									</span>
 								</label>
-								
 							</div>
-							
+
 							<div
 								className={
 									activeNext ? "button-1-square" : "button-1-square unactive"
@@ -882,9 +850,13 @@ function LoadNftPage() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-settings">
-							
 							<div className="project-settings">
-								<div className="title">
+								<div
+									className="title"
+									onClick={() => {
+										accordionChange(0);
+									}}
+								>
 									Project details{" "}
 									<span
 										className={accordionHidden[0] ? "hidden" : ""}
@@ -944,7 +916,12 @@ function LoadNftPage() {
 										Set Collection Description
 									</span>
 								</div>
-								<div className="title">
+								<div
+									className="title"
+									onClick={() => {
+										accordionChange(1);
+									}}
+								>
 									Dimensions{" "}
 									<div
 										aria-label="The image resolution are picked from the first image you drag and drop. We expect all images to be the same resolution."
@@ -963,60 +940,93 @@ function LoadNftPage() {
 										accordionHidden[1] ? "hidden" : "setting setting-grid"
 									}
 								>
-									{/* <div className="title-settings">Dimension (px)</div> */}
-
 									<div class="dim-title">Width (px)</div>
 									<div class="dim-title">Height (px)</div>
 									<div className="dimensions">
 										<div>{width}</div>
-										{/* <input
-											type="text"
-											placeholder={maxSize}
-											value={width}
-											className={
-												errorInput == "width"
-													? "input-settings inputL inputL1 inputErr"
-													: "input-settings inputL inputL1"
-											}
-											onChange={(event) =>
-												changeError("width", event.target.value)
-											}
-										/>
-										<span className={errorInput == "width" ? "errMsg" : "hide"}>
-											Set width
-										</span> */}
 									</div>
-
 									<div className="dimensions">
 										<div>{height}</div>
-										{/* <input
-											type="text"
-											placeholder={maxSize}
-											value={height}
-											className={
-												errorInput == "height"
-													? "input-settings inputL inputErr"
-													: "input-settings inputL"
-											}
-											onChange={(event) =>
-												changeError("height", event.target.value)
-											}
-										/>
-										<span
-											className={errorInput == "height" ? "errMsg" : "hide"}
-										>
-											Set height
-										</span> */}
 									</div>
-									{/* <button onClick={()=>setWidth(width+1)}>test1</button>
-									<button onClick={()=>console.log(width)}>test2</button> */}
 								</div>
 
-								
+								{classArr1.length > 0 &&
+								classArr1[curentLayer]?.["url"][curentImages[curentLayer]] ? (
+									<>
+										<div onClick={() => accordionChange(2)} className="title">
+											File Info{" "}
+											<span
+												className={accordionHidden[2] ? "hidden" : ""}
+												onClick={() => {
+													accordionChange(2);
+												}}
+											></span>
+										</div>
+										<div className="text">Selected File Info</div>
+										<div className={accordionHidden[2] ? "hidden" : "setting"}>
+											<div className="text__group">
+												<span className="text__group-label">File Name</span>
+												<span className="text__group-value">
+													{classArr1[curentLayer]["names"][
+														curentImages[curentLayer]
+													] ?? ""}
+												</span>
+											</div>
+											<div className="text__group">
+												<span className="text__group-label">File Url</span>
+												<span className="text__group-value">
+													{classArr1[curentLayer]["url"][
+														curentImages[curentLayer]
+													] ? (
+														<a
+															className="link"
+															href={
+																classArr1[curentLayer]["url"][
+																	curentImages[curentLayer]
+																]
+															}
+															target="_blank"
+														>
+															{
+																classArr1[curentLayer]["url"][
+																	curentImages[curentLayer]
+																]
+															}
+														</a>
+													) : (
+														""
+													)}
+												</span>
+											</div>
+											<div className="text__group">
+												<span className="text__group-label">Resolution</span>
+												<span className="text__group-value">
+													{classArr1[curentLayer]["sizes"]["width"][
+														curentImages[curentLayer]
+													] ?? ""}
+													{classArr1[curentLayer]["sizes"]["width"][
+														curentImages[curentLayer]
+													]
+														? "x"
+														: ""}
+													{classArr1[curentLayer]["sizes"]["height"][
+														curentImages[curentLayer]
+													] ?? ""}
+													{classArr1[curentLayer]["sizes"]["width"][
+														curentImages[curentLayer]
+													]
+														? " px"
+														: ""}
+												</span>
+											</div>
+										</div>
+									</>
+								) : (
+									<></>
+								)}
 							</div>
 						</div>
 						<div className="break"></div>
-
 					</div>
 				</div>
 

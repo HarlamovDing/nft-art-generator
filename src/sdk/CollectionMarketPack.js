@@ -182,7 +182,7 @@ function CollectionMarketPack() {
 			>
 				<Header activeCat={2}></Header>
 
-				<div class="collection">
+				<div className="collection">
 					<div
 						className={errorModal.hidden === true ? "error-modal-img" : "hide"}
 					>
@@ -194,7 +194,7 @@ function CollectionMarketPack() {
 						{/* <div className="message">{errorModal.message}</div> */}
 					</div>
 
-					<div class="title">{collection.name}</div>
+					<div className="title">{collection.name}</div>
 					<div className="text">
 						<div>
 							Description:<span>{collection.desc}</span>
@@ -210,19 +210,19 @@ function CollectionMarketPack() {
 							Author:<span>{collection.addrAuth}</span>
 						</div>
 					</div>
-					<div class="text">
+					<div className="text">
 						By purchasing and opening a pack of a collection, you get one of the
 						NFTs from the selected collection
 					</div>
 
-					<div class="button-1-square" onClick={openPack}>
+					<div className="button-1-square" onClick={openPack}>
 						Buy & Open Pack
 					</div>
 
-					{/* <div class="nft-collection">
+					{/* <div className="nft-collection">
 						{collection.map((item) => {
 							return (
-								<div class="nft-element" onClick={()=>setErrorModal({
+								<div className="nft-element" onClick={()=>setErrorModal({
 									hidden: true,
 									message: item
 								})}>

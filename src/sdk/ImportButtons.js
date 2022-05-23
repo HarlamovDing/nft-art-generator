@@ -11,26 +11,23 @@ Object.defineProperty(window, "indexedDB", {
 });
 
 function ImportButtons() {
+	let history = useHistory();
 
-    let history = useHistory();
+	function newProject() {
+		// localStorage.clear();
+		// sessionStorage.clear();
+		// TODO Delete all DB data
+		history.push("/load-nft");
+	}
 
-    function newProject() {
-        // localStorage.clear();
-        // sessionStorage.clear();
-        // TODO Delete all DB data
-        history.push("/load-nft")
-    }
+	function openProject() {}
 
-    function openProject() {
-
-    }
-
-    function handleFile(e) {
+	function handleFile(e) {
 		const fileReader = new FileReader();
 		fileReader.readAsText(e.target.files[0], "UTF-8");
 		fileReader.onload = (e) => {
 			const data = JSON.parse(e.target.result);
-            console.log(data);
+			console.log(data);
 			// setProjectName(data.projectName || "");
 			// setCollectionName(data.collectionName || "");
 			// setProjectDescription(data.projectDescription || "");
@@ -42,25 +39,16 @@ function ImportButtons() {
 		};
 	}
 
-
-    return (
-        <div class="import-buttons">
-            <div class="new" onClick={newProject}></div>
-            {/* <div class="import"></div> */}
-            <Box className="import" type="button" component="label">
-                <input
-                    type="file"
-                    accept=".json"
-                    hidden
-                    onChange={handleFile}
-                />
-            </Box>
-            <div class="save"></div>
-            
-        </div>
-    )
-
-
+	return (
+		<div className="import-buttons">
+			<div className="new" onClick={newProject}></div>
+			{/* <div className="import"></div> */}
+			<Box className="import" type="button" component="label">
+				<input type="file" accept=".json" hidden onChange={handleFile} />
+			</Box>
+			<div className="save"></div>
+		</div>
+	);
 }
 
 export default ImportButtons;
